@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#050505"/>
+      <stop offset="100%" stop-color="#0d0d1a"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00d4ff"/>
+      <stop offset="100%" stop-color="#9b7bff"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Grid pattern -->
+  <g opacity="0.06" stroke="#00d4ff" stroke-width="1">
+    <line x1="0" y1="63"  x2="1200" y2="63"/>
+    <line x1="0" y1="126" x2="1200" y2="126"/>
+    <line x1="0" y1="189" x2="1200" y2="189"/>
+    <line x1="0" y1="252" x2="1200" y2="252"/>
+    <line x1="0" y1="315" x2="1200" y2="315"/>
+    <line x1="0" y1="378" x2="1200" y2="378"/>
+    <line x1="0" y1="441" x2="1200" y2="441"/>
+    <line x1="0" y1="504" x2="1200" y2="504"/>
+    <line x1="0" y1="567" x2="1200" y2="567"/>
+    <line x1="60"  y1="0" x2="60"  y2="630"/>
+    <line x1="120" y1="0" x2="120" y2="630"/>
+    <line x1="180" y1="0" x2="180" y2="630"/>
+    <line x1="240" y1="0" x2="240" y2="630"/>
+    <line x1="300" y1="0" x2="300" y2="630"/>
+    <line x1="360" y1="0" x2="360" y2="630"/>
+    <line x1="420" y1="0" x2="420" y2="630"/>
+    <line x1="480" y1="0" x2="480" y2="630"/>
+    <line x1="540" y1="0" x2="540" y2="630"/>
+    <line x1="600" y1="0" x2="600" y2="630"/>
+    <line x1="660" y1="0" x2="660" y2="630"/>
+    <line x1="720" y1="0" x2="720" y2="630"/>
+    <line x1="780" y1="0" x2="780" y2="630"/>
+    <line x1="840" y1="0" x2="840" y2="630"/>
+    <line x1="900" y1="0" x2="900" y2="630"/>
+    <line x1="960" y1="0" x2="960" y2="630"/>
+    <line x1="1020" y1="0" x2="1020" y2="630"/>
+    <line x1="1080" y1="0" x2="1080" y2="630"/>
+    <line x1="1140" y1="0" x2="1140" y2="630"/>
+  </g>
+
+  <!-- Glow orb -->
+  <circle cx="900" cy="315" r="280" fill="url(#accent)" opacity="0.07"/>
+
+  <!-- Bracket accent -->
+  <text x="80" y="220" font-family="monospace" font-size="160" fill="#00d4ff" opacity="0.15" font-weight="600">[</text>
+  <text x="1060" y="220" font-family="monospace" font-size="160" fill="#9b7bff" opacity="0.15" font-weight="600">]</text>
+
+  <!-- Name -->
+  <text x="100" y="270" font-family="'Space Grotesk', Arial, sans-serif" font-size="90" font-weight="700" fill="white" letter-spacing="-3">Ahmed Reda</text>
+
+  <!-- Gradient line under name -->
+  <rect x="100" y="290" width="560" height="4" rx="2" fill="url(#accent)" filter="url(#glow)"/>
+
+  <!-- Title -->
+  <text x="100" y="360" font-family="'Space Grotesk', Arial, sans-serif" font-size="36" font-weight="500" fill="#888">Senior Flutter Developer</text>
+
+  <!-- Stats row -->
+  <g font-family="monospace" font-size="18" fill="#555">
+    <text x="100" y="430">4+ Years</text>
+    <text x="230" y="430" fill="#333">·</text>
+    <text x="250" y="430">10+ Apps Shipped</text>
+    <text x="450" y="430" fill="#333">·</text>
+    <text x="470" y="430">100K+ Downloads</text>
+    <text x="680" y="430" fill="#333">·</text>
+    <text x="700" y="430">4.5★ Rating</text>
+  </g>
+
+  <!-- Tech tags -->
+  <g font-family="monospace" font-size="14" fill="#444">
+    <rect x="100" y="460" width="84"  height="28" rx="14" fill="none" stroke="#222" stroke-width="1"/>
+    <text x="142" y="478" text-anchor="middle">Flutter</text>
+    <rect x="196" y="460" width="60"  height="28" rx="14" fill="none" stroke="#222" stroke-width="1"/>
+    <text x="226" y="478" text-anchor="middle">Dart</text>
+    <rect x="268" y="460" width="80"  height="28" rx="14" fill="none" stroke="#222" stroke-width="1"/>
+    <text x="308" y="478" text-anchor="middle">Firebase</text>
+    <rect x="360" y="460" width="56"  height="28" rx="14" fill="none" stroke="#222" stroke-width="1"/>
+    <text x="388" y="478" text-anchor="middle">BLoC</text>
+    <rect x="428" y="460" width="160" height="28" rx="14" fill="none" stroke="#222" stroke-width="1"/>
+    <text x="508" y="478" text-anchor="middle">Clean Architecture</text>
+  </g>
+
+  <!-- Bottom line -->
+  <text x="100" y="570" font-family="monospace" font-size="16" fill="#333">github.com/devahmedelgharbawy · linkedin.com/in/devreda</text>
+
+  <!-- [AR] logo top right -->
+  <text x="1080" y="80" font-family="monospace" font-size="28" font-weight="600" fill="#00d4ff" text-anchor="middle" filter="url(#glow)">[AR]</text>
+</svg>
