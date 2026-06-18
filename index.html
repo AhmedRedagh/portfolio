@@ -1,1166 +1,865 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="blackprint">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#050505">
-    <title>Ahmed Reda | Senior Flutter Developer</title>
-    <meta name="description" content="Senior Flutter Developer with 4+ years building mobile apps across healthcare, fintech & enterprise. Cairo, Egypt.">
-    <meta name="author" content="Ahmed Reda Elgharbawy">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ahmed Reda — Flutter Engineering · Teardown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   AHMED REDA — TEARDOWN  ·  WebGL exploded view (Three.js) · blackprint
+   ===================================================================== */
+html[data-theme="blackprint"]{
+  --bg:#0a0b0e; --bg2:#101216; --panel:#0e1014;
+  --ink:#ece8dd; --ink-dim:#7d8290; --ink-faint:#454b57;
+  --grid:rgba(236,232,221,.05); --grid-strong:rgba(236,232,221,.10);
+  --line:#2a2f39;
+  --accent:#ff6a1a; --accent2:#36e0cf; --accent3:#c6ff3a;
+  --glow:rgba(255,106,26,.55);
+}
+html[data-theme="draft"]{
+  --bg:#e9e2d0; --bg2:#e2dac6; --panel:#efe9da;
+  --ink:#211d15; --ink-dim:#6c6552; --ink-faint:#b3a988;
+  --grid:rgba(33,29,21,.06); --grid-strong:rgba(33,29,21,.12);
+  --line:#c3b896;
+  --accent:#c8431a; --accent2:#1c7d72; --accent3:#6f7a17;
+  --glow:rgba(200,67,26,.4);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{ -webkit-font-smoothing:antialiased; scroll-behavior:smooth; }
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:"Archivo",system-ui,sans-serif; line-height:1.5; overflow-x:hidden;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:38px 38px; transition:background-color .5s,color .5s;
+}
+::selection{ background:var(--accent); color:var(--bg); }
+a{ color:inherit; text-decoration:none; }
+.mono{ font-family:"Space Mono",monospace; }
+h1,h2,h3,h4{ font-weight:800; line-height:.98; letter-spacing:-.02em; }
+.tlabel{ font-family:"Space Mono",monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-dim); }
 
-    <!-- Open Graph -->
-    <meta property="og:title" content="Ahmed Reda | Senior Flutter Developer">
-    <meta property="og:description" content="4+ years crafting mobile experiences. From architecture to App Store.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://AhmedRedagh.github.io/portfolio/">
-    <meta property="og:image" content="og-image.svg">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content="og-image.svg">
+/* ---------- FIXED CHROME ---------- */
+.chrome{ position:fixed; inset:0; z-index:60; pointer-events:none; }
+.chrome .frame{ position:absolute; inset:16px; border:1px solid var(--line); }
+.corner{ position:absolute; width:26px; height:26px; color:var(--accent); }
+.corner::before,.corner::after{ content:""; position:absolute; background:currentColor; }
+.corner::before{ width:100%; height:1.5px; top:50%; } .corner::after{ height:100%; width:1.5px; left:50%; }
+.corner.tl{ top:8px; left:8px; } .corner.tr{ top:8px; right:8px; } .corner.bl{ bottom:8px; left:8px; } .corner.br{ bottom:8px; right:8px; }
+.ruler{ position:absolute; color:var(--ink-faint); }
+.ruler.top{ top:16px; left:16px; right:16px; height:14px; border-bottom:1px solid var(--line); background-image:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 38px); }
+.ruler.left{ left:16px; top:16px; bottom:16px; width:14px; border-right:1px solid var(--line); background-image:repeating-linear-gradient(0deg,var(--line) 0 1px,transparent 1px 38px); }
+.scan{ position:fixed; inset:0; z-index:61; pointer-events:none; opacity:.5; background:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px); mix-blend-mode:overlay; }
+html[data-theme="draft"] .scan{ display:none; }
+.cross{ position:fixed; z-index:62; pointer-events:none; inset:0; opacity:0; transition:opacity .3s; }
+.cross .hx,.cross .vx{ position:absolute; background:var(--accent); opacity:.45; }
+.cross .hx{ left:0; right:0; height:1px; } .cross .vx{ top:0; bottom:0; width:1px; }
+.cross .coord{ position:absolute; font-family:"Space Mono",monospace; font-size:10px; letter-spacing:.1em; color:var(--accent); background:var(--bg); padding:2px 5px; border:1px solid var(--line); transform:translate(12px,12px); }
+@media (max-width:860px){ .cross{ display:none; } }
 
-    <!-- PWA -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icons/icon-192.svg">
+/* ---------- NAV ---------- */
+.nav{ position:fixed; top:0; left:0; width:100%; z-index:70; display:flex; justify-content:space-between; align-items:center; padding:26px clamp(28px,4vw,60px); pointer-events:none; }
+.nav>*{ pointer-events:auto; }
+.nav .brand{ font-family:"Space Mono",monospace; font-size:13px; letter-spacing:.14em; text-transform:uppercase; display:flex; gap:10px; align-items:center; }
+.nav .brand b{ color:var(--accent); } .nav .brand .vr{ width:1px; height:14px; background:var(--line); }
+.nav .right{ display:flex; gap:22px; align-items:center; }
+.nav .right a{ font-family:"Space Mono",monospace; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-dim); transition:color .2s; }
+.nav .right a:hover{ color:var(--accent); }
+@media (max-width:860px){ .nav .right .lnk{ display:none; } }
+.tswitch{ display:flex; gap:6px; align-items:center; border:1px solid var(--line); padding:5px; }
+.tswitch button{ width:16px; height:16px; border:1px solid var(--line); cursor:pointer; background:transparent; }
+.tswitch button.b{ background:#0a0b0e; } .tswitch button.d{ background:#c8431a; }
+.tswitch button.on{ outline:2px solid var(--accent); outline-offset:1px; }
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+/* ---------- TEARDOWN STAGE ---------- */
+.teardown{ position:relative; height:440vh; }
+.stage{ position:sticky; top:0; height:100vh; overflow:hidden; }
+.scene{ position:absolute; inset:0; cursor:grab; touch-action:pan-y; }
+.scene.grabbing{ cursor:grabbing; }
+.scene::after{ content:""; position:absolute; inset:0; pointer-events:none; background:radial-gradient(60% 55% at 58% 48%, transparent 55%, color-mix(in srgb,var(--bg) 72%,transparent) 100%); }
+#gl{ display:block; width:100%; height:100%; }
 
-    <!-- Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/ScrollToPlugin.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+/* projected 3D callout */
+.lead3d{ position:absolute; inset:0; z-index:5; pointer-events:none; overflow:visible; opacity:0; transition:opacity .35s; }
+.lead3d line{ stroke:var(--accent); stroke-width:1; }
+.lead3d circle{ fill:var(--accent); }
+.tag3d{ position:absolute; z-index:6; pointer-events:none; transform:translate(0,-50%); opacity:0; transition:opacity .35s; white-space:nowrap; }
+.tag3d .id{ font-family:"Space Mono",monospace; font-size:13px; font-weight:700; color:var(--accent); letter-spacing:.1em; }
+.tag3d .nm{ font-family:"Space Mono",monospace; font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-dim); }
 
-    <!-- JSON-LD Structured Data -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Ahmed Reda Elgharbawy",
-      "jobTitle": "Senior Flutter Developer",
-      "url": "https://AhmedRedagh.github.io/portfolio/",
-      "email": "devahmedelgharbawy@gmail.com",
-      "telephone": "+201116644523",
-      "address": { "@type": "PostalAddress", "addressLocality": "Cairo", "addressCountry": "EG" },
-      "alumniOf": { "@type": "CollegeOrUniversity", "name": "Mansoura University" },
-      "sameAs": [
-        "https://github.com/AhmedRedagh",
-        "https://linkedin.com/in/devreda"
-      ],
-      "knowsAbout": ["Flutter", "Dart", "Mobile Development", "Clean Architecture", "BLoC", "Firebase"],
-      "worksFor": { "@type": "Organization", "name": "Girix Solutions" }
-    }
-    </script>
+/* hero overlay */
+.hero-ov{ position:absolute; inset:0; z-index:7; pointer-events:none; display:flex; flex-direction:column; justify-content:center; padding:0 clamp(28px,5vw,90px); will-change:opacity,transform; }
+.hero-ov .fig{ display:flex; gap:14px; align-items:center; margin-bottom:18px; }
+.hero-ov .fig .dot{ width:8px; height:8px; background:var(--accent); border-radius:50%; animation:pulse 1.5s infinite; }
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.hero-ov h1{ font-size:clamp(58px,12vw,190px); text-transform:uppercase; letter-spacing:-.04em; line-height:.86; }
+.hero-ov h1 .o{ -webkit-text-stroke:1.5px var(--ink); color:transparent; }
+.hero-ov .sub{ margin-top:22px; max-width:30ch; color:var(--ink-dim); font-size:clamp(14px,1.3vw,18px); }
+.hero-ov .sub b{ color:var(--ink); font-weight:600; }
 
-    <link rel="stylesheet" href="style.css">
+/* HUD */
+.hud{ position:absolute; top:clamp(86px,12vh,120px); left:clamp(28px,5vw,64px); z-index:6; opacity:0; transition:opacity .4s; }
+.hud .big{ font-size:clamp(40px,7vw,96px); color:var(--accent); line-height:.9; letter-spacing:-.02em; }
+.hud .nm{ font-size:clamp(15px,1.6vw,22px); text-transform:uppercase; letter-spacing:.04em; margin-top:6px; }
+.hud .sub{ font-family:"Space Mono",monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-dim); margin-top:8px; }
+
+/* readout */
+.readout{ position:absolute; left:clamp(28px,5vw,64px); bottom:clamp(28px,5vh,54px); z-index:6; width:min(360px,42vw); opacity:0; transition:opacity .4s; }
+.readout .desc{ font-size:clamp(14px,1.25vw,17px); color:var(--ink); margin-bottom:16px; text-wrap:pretty; }
+.readout .specs{ display:grid; gap:7px; }
+.readout .specs div{ display:flex; gap:10px; align-items:baseline; font-family:"Space Mono",monospace; font-size:12px; color:var(--ink-dim); }
+.readout .specs div::before{ content:"+"; color:var(--accent); }
+.readout .specs .hwrow{ color:var(--accent); border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line)); background:color-mix(in srgb,var(--accent) 7%,transparent); padding:9px 12px; margin-bottom:6px; letter-spacing:.02em; font-weight:700; }
+.readout .specs .hwrow::before{ content:"▣"; }
+@media (max-width:860px){ .readout{ width:min(86vw,420px); } }
+
+/* controls */
+.controls{ position:absolute; right:clamp(28px,5vw,64px); bottom:clamp(28px,5vh,54px); z-index:7; display:flex; flex-direction:column; align-items:flex-end; gap:14px; }
+.dismantle{ pointer-events:auto; cursor:pointer; background:transparent; border:1px solid var(--accent); color:var(--accent); font-family:"Space Mono",monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; padding:13px 20px; display:flex; gap:12px; align-items:center; transition:background .2s,color .2s; }
+.dismantle:hover{ background:var(--accent); color:var(--bg); }
+.hint{ font-family:"Space Mono",monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-dim); display:flex; align-items:center; gap:9px; }
+.hint .ico{ width:30px; height:18px; border:1px solid var(--line); border-radius:9px; position:relative; }
+.hint .ico::after{ content:""; position:absolute; top:50%; left:50%; width:5px; height:5px; border-radius:50%; background:var(--accent); transform:translate(-50%,-50%); animation:drag 2s infinite; }
+@keyframes drag{0%,100%{transform:translate(-150%,-50%)}50%{transform:translate(50%,-50%)}}
+
+/* rail */
+.rail{ position:absolute; right:clamp(20px,3vw,40px); top:50%; transform:translateY(-50%); z-index:6; display:flex; flex-direction:column; gap:14px; align-items:center; }
+.rail .t{ width:8px; height:8px; border:1px solid var(--ink-faint); border-radius:50%; position:relative; }
+.rail .t.on{ background:var(--accent); border-color:var(--accent); box-shadow:0 0 10px var(--glow); }
+.rail .t span{ position:absolute; right:16px; top:50%; transform:translateY(-50%); font-family:"Space Mono",monospace; font-size:10px; letter-spacing:.1em; color:var(--ink-dim); white-space:nowrap; opacity:0; transition:opacity .25s; }
+.rail .t.on span{ opacity:1; color:var(--accent); }
+@media (max-width:680px){ .rail{ display:none; } .controls .hint{ display:none; } }
+
+.cue{ position:absolute; left:50%; bottom:30px; transform:translateX(-50%); z-index:6; font-family:"Space Mono",monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-dim); display:flex; flex-direction:column; align-items:center; gap:8px; }
+.cue .ln{ width:1px; height:34px; background:linear-gradient(var(--accent),transparent); }
+
+/* ---------- CONTENT ---------- */
+.wrap{ width:min(1280px,90vw); margin:0 auto; position:relative; z-index:2; }
+.sec-tag{ display:flex; align-items:center; gap:16px; margin-bottom:38px; }
+.sec-tag .fig{ font-family:"Space Mono",monospace; font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); }
+.sec-tag .rule{ flex:1; height:1px; background:var(--line); }
+.sec-tag h2{ font-size:clamp(30px,5vw,68px); text-transform:uppercase; }
+.section{ padding:clamp(90px,13vh,170px) 0; border-top:1px solid var(--line); }
+
+.units{ display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line); border:1px solid var(--line); }
+@media (max-width:820px){ .units{ grid-template-columns:1fr; } }
+.unit{ background:var(--bg); padding:clamp(26px,3vw,40px); position:relative; transition:background .3s; }
+.unit:hover{ background:var(--bg2); }
+.unit .top{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:26px; }
+.unit .pno{ font-family:"Space Mono",monospace; font-size:12px; letter-spacing:.14em; color:var(--ink-dim); }
+.unit .status{ font-family:"Space Mono",monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent3); border:1px solid currentColor; padding:4px 9px; }
+.unit h3{ font-size:clamp(26px,3vw,40px); text-transform:uppercase; margin-bottom:14px; }
+.unit:hover h3{ color:var(--accent); }
+.unit p{ color:var(--ink-dim); font-size:15px; max-width:44ch; margin-bottom:24px; text-wrap:pretty; }
+.unit .bom{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:26px; }
+.unit .bom span{ font-family:"Space Mono",monospace; font-size:11px; letter-spacing:.08em; color:var(--ink-dim); border:1px solid var(--line); padding:5px 10px; }
+.unit .schem{ height:140px; border:1px solid var(--line); position:relative; overflow:hidden; color:var(--ink-faint); background:radial-gradient(circle at 1px 1px, var(--grid-strong) 1px, transparent 0) 0 0/16px 16px; }
+.unit:hover .schem{ color:var(--accent); }
+.unit .schem svg{ position:absolute; inset:0; width:100%; height:100%; }
+.unit .open{ position:absolute; right:clamp(26px,3vw,40px); bottom:clamp(26px,3vw,40px); width:42px; height:42px; border:1px solid var(--line); border-radius:50%; display:grid; place-items:center; transition:.3s; }
+.unit:hover .open{ background:var(--accent); border-color:var(--accent); color:var(--bg); transform:rotate(-45deg); }
+
+.record{ position:relative; padding-left:clamp(30px,6vw,90px); }
+.record .axis{ position:absolute; left:clamp(12px,3vw,30px); top:0; bottom:0; width:1px; background:var(--line); }
+.record .axis .fill{ position:absolute; top:0; left:0; width:100%; height:0; background:var(--accent); }
+.station{ position:relative; padding:24px 0 46px; }
+.station .node{ position:absolute; left:calc(-1 * clamp(30px,6vw,90px) + clamp(7px,3vw,25px)); top:30px; width:12px; height:12px; border:2px solid var(--ink-faint); background:var(--bg); transform:rotate(45deg); transition:.3s; }
+.station.on .node{ border-color:var(--accent); background:var(--accent); box-shadow:0 0 12px var(--glow); }
+.station .yr{ font-family:"Space Mono",monospace; font-size:12px; letter-spacing:.16em; color:var(--accent); }
+.station h3{ font-size:clamp(22px,3vw,40px); text-transform:uppercase; margin:8px 0 4px; }
+.station .co{ font-family:"Space Mono",monospace; font-size:13px; color:var(--ink-dim); }
+.station p{ color:var(--ink-dim); max-width:60ch; margin-top:12px; text-wrap:pretty; }
+
+.bomtable{ border:1px solid var(--line); font-family:"Space Mono",monospace; }
+.bomtable .hd,.bomtable .row{ display:grid; grid-template-columns:64px 1fr 120px 88px; }
+.bomtable .hd{ background:var(--bg2); border-bottom:1px solid var(--line); }
+.bomtable .hd div{ padding:13px 16px; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-dim); }
+.bomtable .row{ border-bottom:1px solid var(--line); transition:background .2s; }
+.bomtable .row:last-child{ border-bottom:none; }
+.bomtable .row:hover{ background:var(--bg2); }
+.bomtable .row div{ padding:14px 16px; font-size:13px; display:flex; align-items:center; }
+.bomtable .row .it{ color:var(--accent); }
+.bomtable .row .ds{ color:var(--ink); font-family:"Archivo",sans-serif; font-weight:600; letter-spacing:0; text-transform:uppercase; font-size:14px; }
+.bomtable .row .qt{ color:var(--ink-dim); } .bomtable .row .lv{ color:var(--ink-dim); } .bomtable .row .lv b{ color:var(--accent3); font-weight:700; }
+@media (max-width:680px){ .bomtable .hd,.bomtable .row{ grid-template-columns:48px 1fr 70px; } .bomtable .hd .h4,.bomtable .row .lv{ display:none; } }
+
+.creds-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); }
+@media (max-width:780px){ .creds-grid{ grid-template-columns:1fr; } }
+.creds-col{ background:var(--bg); padding:clamp(22px,2.6vw,34px); }
+.creds-h{ color:var(--accent); margin-bottom:22px; }
+.cred{ padding:16px 0; border-top:1px solid var(--line); }
+.cred:first-of-type{ border-top:none; }
+.cred .cy{ font-family:"Space Mono",monospace; font-size:11px; letter-spacing:.14em; color:var(--accent); margin-bottom:6px; }
+.cred .cn{ font-size:clamp(16px,1.7vw,20px); font-weight:700; text-transform:uppercase; letter-spacing:-.01em; line-height:1.1; }
+.cred .cd{ color:var(--ink-dim); font-size:13px; margin-top:5px; }
+
+.req{ text-align:center; }
+.req .big{ font-size:clamp(46px,11vw,150px); text-transform:uppercase; line-height:.86; letter-spacing:-.03em; display:inline-block; }
+.req .big .o{ -webkit-text-stroke:1.5px var(--ink); color:transparent; transition:.3s; }
+.req .big:hover .o{ color:var(--accent); -webkit-text-stroke-color:var(--accent); }
+.req .sub{ color:var(--ink-dim); margin:28px auto 38px; max-width:48ch; }
+.req .acts{ display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+.req .btn{ font-family:"Space Mono",monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; padding:16px 30px; border:1px solid var(--line); display:inline-flex; gap:10px; align-items:center; transition:.25s; }
+.req .btn.pri{ background:var(--accent); border-color:var(--accent); color:var(--bg); }
+.req .btn:hover{ transform:translateY(-3px); border-color:var(--accent); }
+
+.titleblock{ border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.tb-grid{ display:grid; grid-template-columns:repeat(4,1fr); }
+@media (max-width:780px){ .tb-grid{ grid-template-columns:repeat(2,1fr); } }
+.tb-cell{ border-right:1px solid var(--line); padding:22px clamp(18px,2.4vw,30px); }
+.tb-cell:last-child{ border-right:none; }
+.tb-cell .k{ font-family:"Space Mono",monospace; font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-dim); margin-bottom:8px; }
+.tb-cell .v{ font-size:16px; font-weight:700; text-transform:uppercase; letter-spacing:-.01em; }
+.tb-cell .v.am{ color:var(--accent); }
+.foot{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:14px; padding:26px 0 60px; }
+.foot a{ font-family:"Space Mono",monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-dim); }
+.foot a:hover{ color:var(--accent); } .foot .socials{ display:flex; gap:22px; }
+
+.reveal{ opacity:1; transform:none; }
+html.anim .reveal{ opacity:0; transform:translateY(34px); transition:opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1); }
+html.anim .reveal.in{ opacity:1; transform:none; }
+@media (prefers-reduced-motion:reduce){ html.anim .reveal{ opacity:1; transform:none; } *,*::before,*::after{ animation-duration:.001ms!important; } }
+</style>
 </head>
-<body class="is-loading">
+<body>
 
-    <!-- Toast -->
-    <div id="toast" role="alert" aria-live="polite"></div>
+<div class="chrome" aria-hidden="true">
+  <div class="frame"></div><div class="ruler top"></div><div class="ruler left"></div>
+  <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+</div>
+<div class="scan" aria-hidden="true"></div>
+<div class="cross" aria-hidden="true"><span class="hx"></span><span class="vx"></span><span class="coord">0000,0000</span></div>
 
-    <!-- Spotlight -->
-    <div id="spotlight" aria-hidden="true"></div>
+<nav class="nav">
+  <a href="#top" class="brand"><b>A.REDA</b><span class="vr"></span>FLUTTER ENGINEERING</a>
+  <div class="right">
+    <a href="#units" class="lnk">Fig.02 / Units</a>
+    <a href="#record" class="lnk">Fig.03 / Record</a>
+    <a href="#bom" class="lnk">Fig.04 / BOM</a>
+    <div class="tswitch" title="Drawing medium">
+      <button class="b on" data-theme="blackprint" title="Blackprint"></button>
+      <button class="d" data-theme="draft" title="Draft / sepia"></button>
+    </div>
+  </div>
+</nav>
 
-    <!-- Section Dots -->
-    <nav id="section-dots" aria-label="Page sections">
-        <a href="#hero"       class="sd" data-label="Home"      ></a>
-        <a href="#about"      class="sd" data-label="About"     ></a>
-        <a href="#experience" class="sd" data-label="Experience"></a>
-        <a href="#projects"   class="sd" data-label="Projects"  ></a>
-        <a href="#skills"     class="sd" data-label="Skills"    ></a>
-        <a href="#certs"      class="sd" data-label="Certs"     ></a>
-        <a href="#contact"    class="sd" data-label="Contact"   ></a>
-    </nav>
-
-    <!-- Back to Top -->
-    <button id="back-top" aria-label="Back to top">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m18 15-6-6-6 6"/></svg>
-    </button>
-
-    <!-- Mobile Drawer Overlay -->
-    <div id="drawer-overlay" aria-hidden="true"></div>
-    <div id="mobile-drawer" role="dialog" aria-label="Navigation menu">
-        <button id="drawer-close" aria-label="Close menu">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-        </button>
-        <div class="drawer-logo">[AR]</div>
-        <nav class="drawer-links">
-            <a href="#about"      class="drawer-link">About</a>
-            <a href="#experience" class="drawer-link">Experience</a>
-            <a href="#projects"   class="drawer-link">Projects</a>
-            <a href="#skills"     class="drawer-link">Skills</a>
-            <a href="#certs"      class="drawer-link">Certifications</a>
-            <a href="#contact"    class="drawer-link">Contact</a>
-        </nav>
-        <div class="drawer-social">
-            <a href="https://github.com/AhmedRedagh" target="_blank" rel="noopener">GitHub</a>
-            <a href="https://linkedin.com/in/devreda" target="_blank" rel="noopener">LinkedIn</a>
-            <a href="mailto:devahmedelgharbawy@gmail.com">Email</a>
-        </div>
+<!-- ===== TEARDOWN STAGE ===== -->
+<section class="teardown" id="top" data-screen-label="Teardown">
+  <div class="stage" id="stage">
+    <div class="scene" id="scene">
+      <canvas id="gl"></canvas>
+      <svg class="lead3d" id="lead3d"><line x1="0" y1="0" x2="0" y2="0"></line><circle cx="0" cy="0" r="3"></circle></svg>
+      <div class="tag3d" id="tag3d"><div class="id" id="tag3dId">L05</div><div class="nm" id="tag3dNm">Motion</div></div>
     </div>
 
-    <!-- Project Modal -->
-    <div id="modal-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Project details">
-        <div id="modal-box">
-            <button id="modal-close" aria-label="Close">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-            </button>
-            <div id="modal-content"></div>
-        </div>
+    <div class="hero-ov" id="heroOv">
+      <div class="fig"><span class="dot"></span><span class="tlabel">Fig.01 — Subject under inspection</span></div>
+      <h1>Ahmed<br><span class="o">Reda</span></h1>
+      <p class="sub"><b>Senior Flutter Developer.</b> 4+ years building mobile apps people actually use — across healthcare, fintech and enterprise. I take products from zero to the App Store. This is a teardown of how one is built.</p>
     </div>
 
-    <!-- ═══════════════ PRELOADER ═══════════════ -->
-    <div id="preloader">
-        <div class="pre-grid"></div>
-        <div class="pre-center">
-            <div class="pre-logo">[AR]</div>
-            <div class="pre-bar-wrap"><div class="pre-bar"></div></div>
-            <div class="pre-count"><span id="pre-num">0</span><span class="pre-pct">%</span></div>
-            <div class="pre-label">Initializing Portfolio</div>
-        </div>
+    <div class="hud" id="hud">
+      <div class="big" id="hudId">L05</div>
+      <div class="nm" id="hudName">Motion</div>
+      <div class="sub" id="hudSub">Layer 5 / 5 · isolated</div>
     </div>
 
-    <!-- ═══════════════ CURSOR ═══════════════ -->
-    <div id="cursor-ring" aria-hidden="true"></div>
-    <div id="cursor-dot"  aria-hidden="true"></div>
+    <div class="readout" id="readout"><div class="desc" id="roDesc"></div><div class="specs" id="roSpecs"></div></div>
 
-    <!-- ═══════════════ NAV ═══════════════ -->
-    <nav id="navbar" role="navigation" aria-label="Main navigation">
-        <a href="#hero" class="nav-logo" aria-label="Ahmed Reda — Home">[<span>AR</span>]</a>
-        <div class="nav-links">
-            <a href="#about"      class="nav-link">About</a>
-            <a href="#experience" class="nav-link">Experience</a>
-            <a href="#projects"   class="nav-link">Projects</a>
-            <a href="#skills"     class="nav-link">Skills</a>
-            <a href="#certs"      class="nav-link">Certs</a>
-            <a href="#contact"    class="nav-cta">Contact</a>
-        </div>
-        <div class="nav-controls">
-            <button id="theme-toggle" aria-label="Toggle colour mode">
-                <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-                <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-            </button>
-            <button id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-drawer">
-                <span></span><span></span><span></span>
-            </button>
-        </div>
-        <div class="nav-scroll-bar" aria-hidden="true"></div>
-    </nav>
-
-    <!-- ═══════════════ HERO ═══════════════ -->
-    <section id="hero">
-        <canvas id="particle-canvas" aria-hidden="true"></canvas>
-        <div class="hero-grain" aria-hidden="true"></div>
-
-        <div class="hero-content">
-            <!-- LEFT: Text -->
-            <div class="hero-text">
-                <div class="hero-badge">
-                    <span class="badge-pulse" aria-hidden="true"></span>
-                    Available for opportunities
-                </div>
-
-                <h1 class="hero-name">
-                    <span class="name-word" id="name-ahmed" data-text="Ahmed">Ahmed</span>
-                    <span class="name-word accent-text" id="name-reda" data-text="Reda">Reda</span>
-                </h1>
-
-                <div class="hero-role">
-                    <span class="role-static">Senior&nbsp;</span>
-                    <span id="role-typed" aria-live="polite"></span><span class="type-cursor" aria-hidden="true">|</span>
-                </div>
-
-                <p class="hero-bio">
-                    4+ years crafting mobile experiences across healthcare, fintech &amp; enterprise.<br>
-                    From architecture to App Store — I own the full journey.
-                </p>
-
-                <div class="hero-actions">
-                    <a href="#projects" class="btn-primary">
-                        View My Work
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                    </a>
-                    <a href="mailto:devahmedelgharbawy@gmail.com" class="btn-ghost">Get In Touch</a>
-                </div>
-
-                <div class="hero-stats" aria-label="Key statistics">
-                    <div class="h-stat">
-                        <span class="h-stat-num" data-target="4">0</span><span class="h-stat-suf" aria-hidden="true">+</span>
-                        <span class="h-stat-lbl">Years Exp.</span>
-                    </div>
-                    <span class="h-stat-div" aria-hidden="true"></span>
-                    <div class="h-stat">
-                        <span class="h-stat-num" data-target="10">0</span><span class="h-stat-suf" aria-hidden="true">+</span>
-                        <span class="h-stat-lbl">Apps Shipped</span>
-                    </div>
-                    <span class="h-stat-div" aria-hidden="true"></span>
-                    <div class="h-stat">
-                        <span class="h-stat-num" data-target="100">0</span><span class="h-stat-suf" aria-hidden="true">K+</span>
-                        <span class="h-stat-lbl">Downloads</span>
-                    </div>
-                    <span class="h-stat-div" aria-hidden="true"></span>
-                    <div class="h-stat">
-                        <span class="h-stat-num" data-target="4.5" data-decimal="1">0</span><span class="h-stat-suf" aria-hidden="true">★</span>
-                        <span class="h-stat-lbl">Avg Rating</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- RIGHT: Profile Photo -->
-            <div class="hero-photo-area" aria-hidden="true">
-                <!-- HUD wrapper — brackets sit outside the clipped image -->
-                <div class="hud-wrap">
-                    <div class="hud-c tl"></div>
-                    <div class="hud-c tr"></div>
-                    <div class="hud-c bl"></div>
-                    <div class="hud-c br"></div>
-                    <div class="hud-lbl hud-top">FLUTTER · DEVELOPER</div>
-                    <div class="hud-lbl hud-bot">CAIRO · EGYPT</div>
-                    <!-- clipped photo -->
-                    <div class="hero-photo-frame" id="hero-photo">
-                        <div class="hud-scan"></div>
-                        <img src="profile.png" alt="Ahmed Reda — Senior Flutter Developer" class="hero-img" loading="eager">
-                        <div class="photo-overlay"></div>
-                    </div>
-                </div>
-                <div class="photo-caption">Connect &amp; Innovate · Google Developer Summit</div>
-            </div>
-        </div>
-
-        <div class="hero-social" aria-label="Social links">
-            <a href="https://github.com/AhmedRedagh" target="_blank" rel="noopener" class="social-btn" aria-label="GitHub">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-            </a>
-            <a href="https://linkedin.com/in/devreda" target="_blank" rel="noopener" class="social-btn" aria-label="LinkedIn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-            </a>
-            <a href="mailto:devahmedelgharbawy@gmail.com" class="social-btn" aria-label="Email">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-            </a>
-        </div>
-
-        <div class="hero-scroll" aria-hidden="true">
-            <div class="scroll-track"><div class="scroll-thumb"></div></div>
-            <span>Scroll</span>
-        </div>
-    </section>
-
-    <!-- Wave Divider -->
-    <div class="wave-divider" aria-hidden="true">
-        <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z" fill="var(--wave-fill)"/></svg>
+    <div class="controls">
+      <button class="dismantle" id="dismantle">Dismantle <span id="dmArrow">⟶</span></button>
+      <div class="hint"><span class="ico"></span>Drag to orbit</div>
     </div>
 
-    <!-- ═══════════════ ABOUT ═══════════════ -->
-    <section id="about" class="section section-alt">
-        <div class="container">
-            <header class="section-head">
-                <span class="sec-num">01</span>
-                <h2 class="sec-title">About Me</h2>
-                <span class="sec-line"></span>
-            </header>
+    <div class="rail" id="rail"></div>
+    <div class="cue" id="cue"><span>Scroll to begin teardown</span><span class="ln"></span></div>
+  </div>
+</section>
 
-            <div class="about-layout">
-                <div class="about-vis">
-                    <div class="avatar-wrap">
-                        <div class="av-ring r1"></div>
-                        <div class="av-ring r2"></div>
-                        <div class="av-ring r3"></div>
-                        <div class="av-core">
-                            <span>AR</span>
-                            <div class="av-glow" aria-hidden="true"></div>
-                        </div>
-                        <div class="av-badge b1" aria-hidden="true">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#54C5F8"><path d="M14.314 0L2.3 12 6 15.7 21.684.013h-7.357zm.014 11.072L7.857 17.53l6.47 6.47H21.7l-6.46-6.468 6.46-6.46h-7.37z"/></svg>
-                            Flutter Expert
-                        </div>
-                        <div class="av-badge b2" aria-hidden="true">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                            Clean Architecture
-                        </div>
-                        <div class="av-badge b3" aria-hidden="true">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-                            4.5★ Avg Rating
-                        </div>
-                    </div>
-                </div>
-
-                <div class="about-text-col">
-                    <p class="about-lead">I'm a Flutter developer who builds mobile apps that people <em>actually use.</em></p>
-                    <p class="about-body">Over 4+ years I've shipped apps across healthcare, fintech, and enterprise — owning architecture, delivery, and the hard decisions in between. I've led mobile development end-to-end and worked on the product side, depending on what the team needed.</p>
-                    <p class="about-body">I work best in environments that move fast and care about code quality.</p>
-
-                    <div class="about-meta">
-                        <div class="meta-item">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                            Cairo, Egypt
-                        </div>
-                        <div class="meta-item">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 3.07 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 2 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L6.91 8.92a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                            +20 111 664 4523
-                        </div>
-                        <div class="meta-item">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-                            B.Sc. CS — Mansoura University, 2020
-                        </div>
-                        <div class="meta-item">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                            Open to Full-time &amp; Contract
-                        </div>
-                        <div class="meta-item">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                            Arabic (Native) · English (Professional)
-                        </div>
-                        <div class="meta-item">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-                            ITI Full-Stack .NET Training, 2019
-                        </div>
-                    </div>
-
-                    <a href="resume.pdf" download="Ahmed_Reda_Senior_Flutter_Developer.pdf" class="btn-outline">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-                        Download Resume
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <div class="wave-divider flip" aria-hidden="true">
-        <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z" fill="var(--wave-fill)"/></svg>
+<!-- ===== FIELD UNITS ===== -->
+<section class="section" id="units">
+  <div class="wrap">
+    <div class="sec-tag reveal"><span class="fig">Fig.02</span><h2>Field Units</h2><span class="rule"></span><span class="tlabel">Deployed / 10+</span></div>
+    <div class="units reveal">
+      <article class="unit">
+        <div class="top"><span class="pno">UNIT-001</span><span class="status">Live · Both stores</span></div>
+        <h3>Sanad Rewards</h3>
+        <p>Health &amp; wellness platform with Apple Health &amp; Google Fit sync, a multimedia hub (articles, podcasts, videos) and offline-first support. Custom Lottie-animated calendar and community feed.</p>
+        <div class="bom"><span>Flutter</span><span>BLoC</span><span>Apple Health</span><span>Google Fit</span><span>Firebase</span></div>
+        <div class="schem"><svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid meet"><circle cx="200" cy="70" r="44" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="200" cy="70" r="30" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4"/><path d="M120 70h26l10-22 14 44 12-30 8 18h26M244 70h36M200 14v14" stroke="currentColor" stroke-width="1.2" fill="none"/></svg></div>
+        <a class="open" href="#" aria-label="Sanad Rewards">↗</a>
+      </article>
+      <article class="unit">
+        <div class="top"><span class="pno">UNIT-002</span><span class="status">GraphQL · Live</span></div>
+        <h3>League Plus</h3>
+        <p>Cross-platform sports prediction platform with real-time match predictions and custom leagues. GraphQL live sync with optimistic UI, deep-linking referral engine and FCM match alerts.</p>
+        <div class="bom"><span>Flutter</span><span>BLoC</span><span>GraphQL</span><span>Deep Links</span><span>Hive</span></div>
+        <div class="schem"><svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid meet"><path d="M80 110V70M120 110V40M160 110V84M200 110V28M240 110V60M280 110V48M320 110V72" stroke="currentColor" stroke-width="6" opacity=".55"/><path d="M80 70l40-30 40 44 40-56 40 32 40-12 40 24" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M70 118h260" stroke="currentColor" stroke-width="1"/></svg></div>
+        <a class="open" href="#" aria-label="League Plus">↗</a>
+      </article>
+      <article class="unit">
+        <div class="top"><span class="pno">UNIT-003</span><span class="status">POS · Offline-first</span></div>
+        <h3>The Kitchen</h3>
+        <p>Full restaurant POS &amp; management: order handling, inventory and reporting on an offline-first architecture so service never stops when the network does.</p>
+        <div class="bom"><span>Flutter</span><span>BLoC</span><span>REST</span><span>Firebase</span><span>Local Storage</span></div>
+        <div class="schem"><svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid meet"><path d="M168 22h64l-6 96H174z" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M180 44h40M180 60h40M180 76h28" stroke="currentColor" stroke-width="1"/><path d="M168 118l8 10 12-8 12 8 12-8 12 8 8-10" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M120 70H96M304 70h-24" stroke="currentColor" stroke-width="1" stroke-dasharray="3 4"/></svg></div>
+        <a class="open" href="#" aria-label="The Kitchen">↗</a>
+      </article>
+      <article class="unit">
+        <div class="top"><span class="pno">UNIT-004</span><span class="status">Maps · Realtime</span></div>
+        <h3>Salute</h3>
+        <p>Medical transport &amp; emergency app with real-time ambulance tracking via Google Maps &amp; Socket.IO, automated appointment scheduling and a driver–patient matching algorithm with route optimisation.</p>
+        <div class="bom"><span>Flutter</span><span>Cubit</span><span>Maps SDK</span><span>Socket.IO</span><span>Firestore</span></div>
+        <div class="schem"><svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid meet"><path d="M90 110q40-70 90-50t110-30" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="5 5"/><path d="M200 36a16 16 0 0 1 16 16c0 12-16 28-16 28s-16-16-16-28a16 16 0 0 1 16-16z" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M200 46v12M194 52h12" stroke="currentColor" stroke-width="1.4"/><circle cx="90" cy="110" r="4" fill="currentColor"/><circle cx="300" cy="46" r="4" fill="currentColor"/></svg></div>
+        <a class="open" href="#" aria-label="Salute">↗</a>
+      </article>
+      <article class="unit">
+        <div class="top"><span class="pno">UNIT-005</span><span class="status">HLS / RTMP</span></div>
+        <h3>I-News TV</h3>
+        <p>Live news streaming with HLS/RTMP adaptive-bitrate playback, a custom video player, playlist management and breaking-news push notifications.</p>
+        <div class="bom"><span>Flutter</span><span>BLoC</span><span>Video Streaming</span><span>Firebase</span><span>WebView</span></div>
+        <div class="schem"><svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid meet"><rect x="150" y="38" width="100" height="64" rx="6" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M188 56l24 14-24 14z" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M120 70q-12-14 0-28M104 70q-22-24 0-48M280 70q12-14 0-28M296 70q22-24 0-48" fill="none" stroke="currentColor" stroke-width="1"/></svg></div>
+        <a class="open" href="#" aria-label="I-News TV">↗</a>
+      </article>
+      <article class="unit">
+        <div class="top"><span class="pno">UNIT-006</span><span class="status">AR / EN · RTL</span></div>
+        <h3>A Year in Review</h3>
+        <p>Medical conference app: QR attendance, workshop enrollment, real-time Q&amp;A and moderator interaction. Full Arabic / English localisation with complete RTL layout handling.</p>
+        <div class="bom"><span>Flutter</span><span>Cubit</span><span>REST</span><span>Firebase</span><span>Localization</span></div>
+        <div class="schem"><svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid meet"><rect x="166" y="36" width="68" height="68" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M176 46h16v16h-16zM208 46h16v16h-16zM176 78h16v16h-16zM208 78h10v6M218 88v6h-10" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M120 70H96M304 70h-24" stroke="currentColor" stroke-width="1" stroke-dasharray="3 4"/></svg></div>
+        <a class="open" href="#" aria-label="A Year in Review">↗</a>
+      </article>
     </div>
+  </div>
+</section>
 
-    <!-- ═══════════════ EXPERIENCE ═══════════════ -->
-    <section id="experience" class="section">
-        <div class="container">
-            <header class="section-head">
-                <span class="sec-num">02</span>
-                <h2 class="sec-title">Experience</h2>
-                <span class="sec-line"></span>
-            </header>
-
-            <div class="timeline">
-                <div class="tl-spine" aria-hidden="true"></div>
-
-                <div class="tl-item">
-                    <div class="tl-dot" aria-hidden="true"></div>
-                    <div class="tl-card">
-                        <div class="tl-card-top">
-                            <div>
-                                <div class="tl-company">Girix Solutions</div>
-                                <div class="tl-role">Senior Flutter Developer</div>
-                                <div class="tl-type">Full-time · Cairo, Egypt</div>
-                            </div>
-                            <span class="tl-period">Apr 2024 – Present</span>
-                        </div>
-                        <ul class="tl-points">
-                            <li>Led end-to-end mobile development for <strong>3+ enterprise clients</strong>, owning full lifecycle from requirements to production</li>
-                            <li>Architected scalable solutions with Clean Architecture &amp; MVVM — reduced complexity by <strong>40%</strong></li>
-                            <li>Mentored 2 junior developers; established coding standards and best-practice documentation</li>
-                            <li>Achieved consistent <strong>60fps</strong> UI rendering and <strong>35% reduction</strong> in cold-start time</li>
-                            <li>Published <strong>4 applications</strong> on Google Play &amp; App Store with <strong>4.3+★</strong> average rating</li>
-                        </ul>
-                        <div class="tl-tags"><span>Flutter</span><span>Clean Architecture</span><span>MVVM</span><span>BLoC</span><span>Firebase</span></div>
-                    </div>
-                </div>
-
-                <div class="tl-item">
-                    <div class="tl-dot" aria-hidden="true"></div>
-                    <div class="tl-card">
-                        <div class="tl-card-top">
-                            <div>
-                                <div class="tl-company">Sanad</div>
-                                <div class="tl-role">Software Engineer — Mobile</div>
-                                <div class="tl-type">Part-time · Cairo, Egypt</div>
-                            </div>
-                            <span class="tl-period">Oct 2023 – Present</span>
-                        </div>
-                        <ul class="tl-points">
-                            <li>Engineered health challenge platform integrating <strong>Apple Health &amp; Google Fit APIs</strong></li>
-                            <li>Eliminated <strong>90%</strong> of manual data entry via real-time fitness data synchronisation</li>
-                            <li>Built full multimedia platform — articles, podcasts, videos, community feed with offline-first support</li>
-                            <li>Achieved <strong>4.5★</strong> rating on both iOS &amp; Android</li>
-                        </ul>
-                        <div class="tl-tags"><span>Flutter</span><span>Apple Health</span><span>Google Fit</span><span>BLoC</span><span>Firebase</span></div>
-                    </div>
-                </div>
-
-                <div class="tl-item">
-                    <div class="tl-dot" aria-hidden="true"></div>
-                    <div class="tl-card">
-                        <div class="tl-card-top">
-                            <div>
-                                <div class="tl-company">League Plus</div>
-                                <div class="tl-role">Flutter Engineer</div>
-                                <div class="tl-type">Contract · Cairo, Egypt</div>
-                            </div>
-                            <span class="tl-period">May 2024 – Mar 2025</span>
-                        </div>
-                        <ul class="tl-points">
-                            <li>Architected cross-platform sports prediction platform with real-time match data</li>
-                            <li>GraphQL integration with <strong>99.9% uptime</strong> and sub-second data latency</li>
-                            <li>Deep linking &amp; referral engine drove <strong>25% uplift</strong> in user acquisition</li>
-                            <li>Grew community to <strong>30K+ active</strong> sports enthusiasts</li>
-                        </ul>
-                        <div class="tl-tags"><span>Flutter</span><span>GraphQL</span><span>Firebase</span><span>Deep Links</span><span>FCM</span></div>
-                    </div>
-                </div>
-
-                <div class="tl-item">
-                    <div class="tl-dot" aria-hidden="true"></div>
-                    <div class="tl-card">
-                        <div class="tl-card-top">
-                            <div>
-                                <div class="tl-company">Freelance</div>
-                                <div class="tl-role">Flutter Developer</div>
-                                <div class="tl-type">Remote</div>
-                            </div>
-                            <span class="tl-period">Aug 2021 – Nov 2023</span>
-                        </div>
-                        <ul class="tl-points">
-                            <li>Delivered <strong>6+ production apps</strong> across healthcare, media, and transportation independently</li>
-                            <li>Built reusable component libraries reducing development time by <strong>30%</strong></li>
-                            <li>Maintained <strong>95% client satisfaction</strong> rate through consistent on-time delivery</li>
-                        </ul>
-                        <div class="tl-tags"><span>Flutter</span><span>Firebase</span><span>REST APIs</span><span>Agora</span><span>Google Maps</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <div class="wave-divider" aria-hidden="true">
-        <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,30 C360,0 1080,60 1440,30 L1440,60 L0,60 Z" fill="var(--wave-fill)"/></svg>
+<!-- ===== SERVICE RECORD ===== -->
+<section class="section" id="record">
+  <div class="wrap">
+        <div class="sec-tag reveal"><span class="fig">Fig.03</span><h2>Service Record</h2><span class="rule"></span><span class="tlabel">4+ yrs in service</span></div>
+    <div class="record">
+      <div class="axis" id="recAxis"><div class="fill"></div></div>
+      <div class="station"><div class="node"></div><div class="yr">APR 2024 — PRESENT</div><h3>Senior Flutter Developer</h3><div class="co">// Girix Solutions · Cairo · Full-time</div><p>Lead end-to-end mobile development for 3+ enterprise clients, owning the full lifecycle from requirements to production. Architected Flutter solutions with Clean Architecture &amp; MVVM, mentor 2 junior developers, set team coding standards, and published 4 apps across both stores at a consistent 60fps.</p></div>
+      <div class="station"><div class="node"></div><div class="yr">OCT 2023 — PRESENT</div><h3>Software Engineer — Mobile</h3><div class="co">// Sanad · Cairo · Part-time</div><p>Engineered a health-challenge platform integrating Apple Health &amp; Google Fit with real-time fitness sync. Built a full multimedia platform (articles, podcasts, videos, community feed) with offline-first support, plus a custom Lottie-animated calendar and location-based challenge tracking.</p></div>
+      <div class="station"><div class="node"></div><div class="yr">MAY 2024 — MAR 2025</div><h3>Flutter Engineer</h3><div class="co">// League Plus · Cairo · Contract</div><p>Architected and shipped a cross-platform sports-prediction platform with real-time predictions and custom leagues. Built GraphQL integration for low-latency live data, a deep-linking referral engine that grew acquisition, and FCM push notifications.</p></div>
+      <div class="station"><div class="node"></div><div class="yr">AUG 2021 — NOV 2023</div><h3>Flutter Developer</h3><div class="co">// Freelance · Remote</div><p>Delivered 6+ production apps across healthcare, media and transportation — owning requirements, architecture, development, testing and store deployment. Integrated payment gateways, real-time chat (Agora), Google Maps and thermal printing, and built reusable component libraries. All delivered on time, zero mid-engagement churn.</p></div>
     </div>
+  </div>
+</section>
 
-    <!-- ═══════════════ PROJECTS ═══════════════ -->
-    <section id="projects" class="section section-alt">
-        <div class="container">
-            <header class="section-head">
-                <span class="sec-num">03</span>
-                <h2 class="sec-title">Projects</h2>
-                <span class="sec-line"></span>
-            </header>
-            <p class="proj-scroll-hint" aria-hidden="true">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                Scroll to explore all projects
-            </p>
-        </div>
-
-        <!-- ── Horizontal scroll track ── -->
-        <div id="proj-pin-wrap">
-          <div id="proj-h-track">
-
-            <!-- SLIDE MACRO — each slide: content left, phone right -->
-            <!-- SANAD ─────────────────────────────────────────────── -->
-            <article class="ph-slide" style="--a:#22c55e" data-modal="sanad">
-              <div class="ph-bg-num" aria-hidden="true">01</div>
-              <div class="ph-inner">
-                <div class="ph-content">
-                  <div class="ph-meta"><span class="pb-live">Live</span><span class="pb-feat">Featured</span><span class="ph-cat">Health &amp; Wellness</span></div>
-                  <h3 class="ph-title">Sanad Rewards</h3>
-                  <p class="ph-desc">Health challenge platform with Apple Health &amp; Google Fit integration. Lottie-animated calendar, multimedia content, and offline-first architecture for 50K+ active users.</p>
-                  <div class="ph-kpis">
-                    <div class="ph-kpi"><span>100K+</span>Downloads</div>
-                    <div class="ph-kpi"><span>4.5★</span>Rating</div>
-                    <div class="ph-kpi"><span>50K+</span>Active Users</div>
-                    <div class="ph-kpi"><span>90%</span>Entry Eliminated</div>
-                  </div>
-                  <div class="ph-stack"><span>Flutter</span><span>BLoC</span><span>Firebase</span><span>Apple Health</span><span>Google Fit</span></div>
-                  <div class="ph-actions">
-                    <a href="https://apps.apple.com/eg/app/sanad-rewards/id6448073834" target="_blank" rel="noopener" class="ph-store">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.07c1.27.27 2.09 1.35 3.1 1.35 1.29 0 2.05-1.05 3.59-1.12 1.65-.04 2.9.75 3.63 2.01-3.3 2.01-2.77 6.97.58 8.43-.36.84-.84 1.68-1.9 2.54zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>App Store
-                    </a>
-                    <a href="https://play.google.com/store/apps/details?id=com.ubd.sanad" target="_blank" rel="noopener" class="ph-store">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.33.19.69.24 1.05.15l11.8-11.8-2.4-2.4-10.45 14.05zM20.77 9.72l-2.78-1.6-2.6 2.6 2.6 2.6 2.8-1.62c.8-.46.8-1.52-.02-1.98zM1.56.63C1.28.97 1.12 1.47 1.12 2.1v19.8c0 .63.16 1.13.44 1.47l.07.07 11.1-11.1v-.27L1.63.56l-.07.07z"/></svg>Play Store
-                    </a>
-                    <button class="ph-detail" data-modal="sanad">Case Study →</button>
-                  </div>
-                </div>
-                <div class="ph-visual">
-                  <div class="ph-phone">
-                    <div class="pph-notch"></div>
-                    <div class="pph-screen pph-icon-screen">
-                      <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/68/c5/60/68c56062-a60d-4ac4-7b7f-4d526db9f0d5/AppIcon-1x_U007emarketing-0-8-0-85-220-0.png/512x512bb.jpg" alt="Sanad Rewards app icon" class="pph-app-icon-img" loading="lazy">
-                      <div class="pph-icon-name">Sanad Rewards</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </article>
-
-            <!-- PULSE ─────────────────────────────────────────────── -->
-            <article class="ph-slide" style="--a:#ef4444" data-modal="pulse">
-              <div class="ph-bg-num" aria-hidden="true">02</div>
-              <div class="ph-inner">
-                <div class="ph-content">
-                  <div class="ph-meta"><span class="pb-live">Live</span><span class="ph-cat">Gym &amp; Fitness</span></div>
-                  <h3 class="ph-title">Pulse</h3>
-                  <p class="ph-desc">Gym training &amp; fitness app with Pusher real-time chat, Pedometer step tracking, video player, and personalised push notifications achieving 40% open rate.</p>
-                  <div class="ph-kpis">
-                    <div class="ph-kpi"><span>40%</span>Notif Open Rate</div>
-                    <div class="ph-kpi"><span>Real-time</span>Chat</div>
-                    <div class="ph-kpi"><span>+25%</span>User Growth</div>
-                  </div>
-                  <div class="ph-stack"><span>Flutter</span><span>Pusher</span><span>GraphQL</span><span>Hive</span><span>Lottie</span></div>
-                  <div class="ph-actions">
-                    <a href="https://apps.apple.com/eg/app/pulse-trainer/id6767938059" target="_blank" rel="noopener" class="ph-store">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.07c1.27.27 2.09 1.35 3.1 1.35 1.29 0 2.05-1.05 3.59-1.12 1.65-.04 2.9.75 3.63 2.01-3.3 2.01-2.77 6.97.58 8.43-.36.84-.84 1.68-1.9 2.54zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>App Store
-                    </a>
-                    <a href="https://play.google.com/store/apps/details?id=com.sanadrewards.sanad.pulse" target="_blank" rel="noopener" class="ph-store">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.33.19.69.24 1.05.15l11.8-11.8-2.4-2.4-10.45 14.05zM20.77 9.72l-2.78-1.6-2.6 2.6 2.6 2.6 2.8-1.62c.8-.46.8-1.52-.02-1.98zM1.56.63C1.28.97 1.12 1.47 1.12 2.1v19.8c0 .63.16 1.13.44 1.47l.07.07 11.1-11.1v-.27L1.63.56l-.07.07z"/></svg>Play Store
-                    </a>
-                    <button class="ph-detail" data-modal="pulse">Case Study →</button>
-                  </div>
-                </div>
-                <div class="ph-visual">
-                  <div class="ph-phone">
-                    <div class="pph-notch"></div>
-                    <div class="pph-screen pph-icon-screen">
-                      <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/92/54/ca/9254ca1a-3c6e-4c34-35f2-c2e9b9bb219f/AppIcon-1x_U007emarketing-0-11-0-85-220-0.png/512x512bb.jpg" alt="Pulse app icon" class="pph-app-icon-img" loading="lazy">
-                      <div class="pph-icon-name">Pulse Trainer</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </article>
-
-            <!-- THE KITCHEN ─────────────────────────────────────── -->
-            <article class="ph-slide" style="--a:#f97316" data-modal="kitchen">
-              <div class="ph-bg-num" aria-hidden="true">03</div>
-              <div class="ph-inner">
-                <div class="ph-content">
-                  <div class="ph-meta"><span class="pb-live">Live</span><span class="ph-cat">Restaurant POS</span></div>
-                  <h3 class="ph-title">The Kitchen</h3>
-                  <p class="ph-desc">Full POS &amp; management system — order management, inventory tracking, real-time reporting, and offline-first architecture for uninterrupted restaurant operations.</p>
-                  <div class="ph-kpis">
-                    <div class="ph-kpi"><span>Offline</span>First Arch.</div>
-                    <div class="ph-kpi"><span>Full</span>POS System</div>
-                    <div class="ph-kpi"><span>Live</span>Reporting</div>
-                  </div>
-                  <div class="ph-stack"><span>Flutter</span><span>BLoC</span><span>REST APIs</span><span>Local Storage</span></div>
-                  <div class="ph-actions">
-                    <a href="https://apps.apple.com/us/app/the-kitchen/id6759858829" target="_blank" rel="noopener" class="ph-store">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.07c1.27.27 2.09 1.35 3.1 1.35 1.29 0 2.05-1.05 3.59-1.12 1.65-.04 2.9.75 3.63 2.01-3.3 2.01-2.77 6.97.58 8.43-.36.84-.84 1.68-1.9 2.54zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>App Store
-                    </a>
-                    <a href="https://play.google.com/store/apps/details?id=com.thekitchen.pos" target="_blank" rel="noopener" class="ph-store">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.33.19.69.24 1.05.15l11.8-11.8-2.4-2.4-10.45 14.05zM20.77 9.72l-2.78-1.6-2.6 2.6 2.6 2.6 2.8-1.62c.8-.46.8-1.52-.02-1.98zM1.56.63C1.28.97 1.12 1.47 1.12 2.1v19.8c0 .63.16 1.13.44 1.47l.07.07 11.1-11.1v-.27L1.63.56l-.07.07z"/></svg>Play Store
-                    </a>
-                    <button class="ph-detail" data-modal="kitchen">Case Study →</button>
-                  </div>
-                </div>
-                <div class="ph-visual">
-                  <div class="ph-phone">
-                    <div class="pph-notch"></div>
-                    <div class="pph-screen pph-icon-screen">
-                      <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/e6/e1/89/e6e1896d-d5e4-17a4-431e-98633adc7c41/AppIcon-1x_U007emarketing-0-8-0-85-220-0.png/512x512bb.jpg" alt="The Kitchen app icon" class="pph-app-icon-img" loading="lazy">
-                      <div class="pph-icon-name">The Kitchen</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </article>
-
-            <!-- YEAR IN REVIEW ─────────────────────────────────── -->
-            <article class="ph-slide" style="--a:#ec4899" data-modal="year">
-              <div class="ph-bg-num" aria-hidden="true">04</div>
-              <div class="ph-inner">
-                <div class="ph-content">
-                  <div class="ph-meta"><span class="pb-live">Live</span><span class="ph-cat">Medical Conference</span></div>
-                  <h3 class="ph-title">Year in Review</h3>
-                  <p class="ph-desc">Medical conference app with QR attendance, workshop enrollment, real-time Q&amp;A, moderator interaction, and full Arabic/English RTL localisation.</p>
-                  <div class="ph-kpis">
-                    <div class="ph-kpi"><span>QR</span>Attendance</div>
-                    <div class="ph-kpi"><span>RTL</span>AR + EN</div>
-                    <div class="ph-kpi"><span>Live</span>Q&amp;A</div>
-                  </div>
-                  <div class="ph-stack"><span>Flutter</span><span>Cubit</span><span>REST APIs</span><span>Firebase</span><span>i18n</span></div>
-                  <div class="ph-actions">
-                    <a href="https://apps.apple.com/app/year-in-review/id6747784581" target="_blank" rel="noopener" class="ph-store">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.07c1.27.27 2.09 1.35 3.1 1.35 1.29 0 2.05-1.05 3.59-1.12 1.65-.04 2.9.75 3.63 2.01-3.3 2.01-2.77 6.97.58 8.43-.36.84-.84 1.68-1.9 2.54zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>App Store
-                    </a>
-                    <a href="https://play.google.com/store/apps/details?id=com.yearinreview.app" target="_blank" rel="noopener" class="ph-store">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.33.19.69.24 1.05.15l11.8-11.8-2.4-2.4-10.45 14.05zM20.77 9.72l-2.78-1.6-2.6 2.6 2.6 2.6 2.8-1.62c.8-.46.8-1.52-.02-1.98zM1.56.63C1.28.97 1.12 1.47 1.12 2.1v19.8c0 .63.16 1.13.44 1.47l.07.07 11.1-11.1v-.27L1.63.56l-.07.07z"/></svg>Play Store
-                    </a>
-                    <button class="ph-detail" data-modal="year">Case Study →</button>
-                  </div>
-                </div>
-                <div class="ph-visual">
-                  <div class="ph-phone">
-                    <div class="pph-notch"></div>
-                    <div class="pph-screen pph-icon-screen">
-                      <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/57/25/d2/5725d200-1fe7-4a5e-fe9f-e5975f4191a1/AppIcon-0-0-1x_U007emarketing-0-11-0-85-220.png/512x512bb.jpg" alt="Year in Review app icon" class="pph-app-icon-img" loading="lazy">
-                      <div class="pph-icon-name">Year In Review</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </article>
-
-            <!-- LEAGUE PLUS ─────────────────────────────────────── -->
-            <article class="ph-slide" style="--a:#facc15" data-modal="league">
-              <div class="ph-bg-num" aria-hidden="true">05</div>
-              <div class="ph-inner">
-                <div class="ph-content">
-                  <div class="ph-meta"><span class="pb-live">Live</span><span class="ph-cat">Sports Prediction</span></div>
-                  <h3 class="ph-title">League Plus</h3>
-                  <p class="ph-desc">Cross-platform sports prediction platform with GraphQL real-time match data, custom league creation, and referral engine that drove 25% user acquisition growth.</p>
-                  <div class="ph-kpis">
-                    <div class="ph-kpi"><span>30K+</span>Active Users</div>
-                    <div class="ph-kpi"><span>99.9%</span>Uptime</div>
-                    <div class="ph-kpi"><span>+25%</span>Acquisition</div>
-                  </div>
-                  <div class="ph-stack"><span>Flutter</span><span>GraphQL</span><span>BLoC</span><span>Firebase</span><span>Deep Links</span></div>
-                  <div class="ph-actions">
-                    <a href="https://apps.apple.com/us/app/league/id6444308226" target="_blank" rel="noopener" class="ph-store">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.07c1.27.27 2.09 1.35 3.1 1.35 1.29 0 2.05-1.05 3.59-1.12 1.65-.04 2.9.75 3.63 2.01-3.3 2.01-2.77 6.97.58 8.43-.36.84-.84 1.68-1.9 2.54zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>App Store
-                    </a>
-                    <a href="https://play.google.com/store/apps/details?id=com.leaguepred.app" target="_blank" rel="noopener" class="ph-store">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.33.19.69.24 1.05.15l11.8-11.8-2.4-2.4-10.45 14.05zM20.77 9.72l-2.78-1.6-2.6 2.6 2.6 2.6 2.8-1.62c.8-.46.8-1.52-.02-1.98zM1.56.63C1.28.97 1.12 1.47 1.12 2.1v19.8c0 .63.16 1.13.44 1.47l.07.07 11.1-11.1v-.27L1.63.56l-.07.07z"/></svg>Play Store
-                    </a>
-                    <button class="ph-detail" data-modal="league">Case Study →</button>
-                  </div>
-                </div>
-                <div class="ph-visual">
-                  <div class="ph-phone">
-                    <div class="pph-notch"></div>
-                    <div class="pph-screen">
-                      <div class="pph-app">
-                        <div class="score-card">
-                          <div class="score-team"><div class="score-badge" style="background:rgba(250,204,21,0.2)">H</div><div class="pph-l s" style="width:40%"></div></div>
-                          <div style="text-align:center;color:rgba(250,204,21,0.9);font-family:monospace;font-size:14px;font-weight:700">2 — 1</div>
-                          <div class="score-team"><div class="score-badge" style="background:rgba(255,255,255,0.08)">A</div><div class="pph-l s" style="width:40%"></div></div>
-                        </div>
-                        <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px">
-                          <div class="pph-l m" style="background:rgba(250,204,21,0.15)"></div>
-                          <div class="pph-l s"></div>
-                          <div class="pph-l m" style="width:60%"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </article>
-
-            <!-- SALUTE ─────────────────────────────────────────── -->
-            <article class="ph-slide" style="--a:#10b981" data-modal="salute">
-              <div class="ph-bg-num" aria-hidden="true">06</div>
-              <div class="ph-inner">
-                <div class="ph-content">
-                  <div class="ph-meta"><span class="pb-live">Live</span><span class="ph-cat">Medical Transport</span></div>
-                  <h3 class="ph-title">Salute</h3>
-                  <p class="ph-desc">Real-time ambulance tracking via Google Maps SDK and Socket.IO. Driver-patient matching with route optimisation that cut patient no-shows by 30%.</p>
-                  <div class="ph-kpis">
-                    <div class="ph-kpi"><span>-30%</span>No-Shows</div>
-                    <div class="ph-kpi"><span>Live</span>GPS Track</div>
-                    <div class="ph-kpi"><span>Route</span>Optimised</div>
-                  </div>
-                  <div class="ph-stack"><span>Flutter</span><span>Google Maps</span><span>Socket.IO</span><span>Firestore</span></div>
-                  <div class="ph-actions">
-                    <a href="https://apps.apple.com/us/app/salute-medical-transpot/id6460401361" target="_blank" rel="noopener" class="ph-store">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.07c1.27.27 2.09 1.35 3.1 1.35 1.29 0 2.05-1.05 3.59-1.12 1.65-.04 2.9.75 3.63 2.01-3.3 2.01-2.77 6.97.58 8.43-.36.84-.84 1.68-1.9 2.54zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>App Store
-                    </a>
-                    <a href="https://play.google.com/store/apps/details?id=com.salute.salutemedical" target="_blank" rel="noopener" class="ph-store">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.33.19.69.24 1.05.15l11.8-11.8-2.4-2.4-10.45 14.05zM20.77 9.72l-2.78-1.6-2.6 2.6 2.6 2.6 2.8-1.62c.8-.46.8-1.52-.02-1.98zM1.56.63C1.28.97 1.12 1.47 1.12 2.1v19.8c0 .63.16 1.13.44 1.47l.07.07 11.1-11.1v-.27L1.63.56l-.07.07z"/></svg>Play Store
-                    </a>
-                    <button class="ph-detail" data-modal="salute">Case Study →</button>
-                  </div>
-                </div>
-                <div class="ph-visual">
-                  <div class="ph-phone">
-                    <div class="pph-notch"></div>
-                    <div class="pph-screen">
-                      <div class="pph-app">
-                        <div class="map-mockup">
-                          <div class="map-grid"></div>
-                          <div class="map-pin ambulance">🚑</div>
-                          <div class="map-pin dest" style="top:30%;left:65%">📍</div>
-                          <div class="map-route"></div>
-                        </div>
-                        <div style="margin-top:8px;padding:6px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:6px">
-                          <div class="pph-l s" style="background:rgba(16,185,129,0.4);width:60%"></div>
-                          <div class="pph-l s" style="width:40%;margin-top:4px"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </article>
-
-            <!-- ISLAMI HUB ─────────────────────────────────────── -->
-            <article class="ph-slide" style="--a:#9b7bff" data-modal="islami">
-              <div class="ph-bg-num" aria-hidden="true">07</div>
-              <div class="ph-inner">
-                <div class="ph-content">
-                  <div class="ph-meta"><span class="pb-live">Live</span><span class="ph-cat">Islamic Companion · iOS</span></div>
-                  <h3 class="ph-title">Islami Hub</h3>
-                  <p class="ph-desc">Quran reader with audio playback, geolocation prayer times, Qibla compass, and custom animations. Achieved 85%+ FCM delivery rate on iOS.</p>
-                  <div class="ph-kpis">
-                    <div class="ph-kpi"><span>85%+</span>FCM Delivery</div>
-                    <div class="ph-kpi"><span>Qibla</span>Compass</div>
-                    <div class="ph-kpi"><span>Geo</span>Prayer Times</div>
-                  </div>
-                  <div class="ph-stack"><span>Flutter</span><span>Cubit</span><span>Location</span><span>Firebase</span></div>
-                  <div class="ph-actions">
-                    <a href="https://apps.apple.com/ca/app/islami-hub/id6756878998" target="_blank" rel="noopener" class="ph-store">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.07c1.27.27 2.09 1.35 3.1 1.35 1.29 0 2.05-1.05 3.59-1.12 1.65-.04 2.9.75 3.63 2.01-3.3 2.01-2.77 6.97.58 8.43-.36.84-.84 1.68-1.9 2.54zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>App Store
-                    </a>
-                    <button class="ph-detail" data-modal="islami">Case Study →</button>
-                  </div>
-                </div>
-                <div class="ph-visual">
-                  <div class="ph-phone">
-                    <div class="pph-notch"></div>
-                    <div class="pph-screen pph-icon-screen">
-                      <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/e5/71/a3/e571a3be-1e68-12c5-f35c-4743605cf1c2/AppIcon-0-1x_U007emarketing-0-11-0-85-220-0.png/512x512bb.jpg" alt="Islami Hub app icon" class="pph-app-icon-img" loading="lazy">
-                      <div class="pph-icon-name">Islami Hub</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </article>
-
-            <!-- GTS CRM ─────────────────────────────────────────── -->
-            <article class="ph-slide" style="--a:#60a5fa" data-modal="crm">
-              <div class="ph-bg-num" aria-hidden="true">08</div>
-              <div class="ph-inner">
-                <div class="ph-content">
-                  <div class="ph-meta"><span class="pb-live">Live</span><span class="ph-cat">CRM · iOS</span></div>
-                  <h3 class="ph-title">GTS CRM</h3>
-                  <p class="ph-desc">End-to-end CRM with client pipeline management, activity logging, sales dashboards, and offline sync for field sales teams operating without reliable connectivity.</p>
-                  <div class="ph-kpis">
-                    <div class="ph-kpi"><span>Offline</span>Sync</div>
-                    <div class="ph-kpi"><span>Sales</span>Dashboard</div>
-                    <div class="ph-kpi"><span>Pipeline</span>Mgmt</div>
-                  </div>
-                  <div class="ph-stack"><span>Flutter</span><span>BLoC</span><span>REST APIs</span><span>GoRouter</span></div>
-                  <div class="ph-actions">
-                    <a href="https://apps.apple.com/za/app/crm-gts/id6755529911" target="_blank" rel="noopener" class="ph-store">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.07c1.27.27 2.09 1.35 3.1 1.35 1.29 0 2.05-1.05 3.59-1.12 1.65-.04 2.9.75 3.63 2.01-3.3 2.01-2.77 6.97.58 8.43-.36.84-.84 1.68-1.9 2.54zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>App Store
-                    </a>
-                    <button class="ph-detail" data-modal="crm">Case Study →</button>
-                  </div>
-                </div>
-                <div class="ph-visual">
-                  <div class="ph-phone">
-                    <div class="pph-notch"></div>
-                    <div class="pph-screen pph-icon-screen">
-                      <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/09/18/9f/09189f0f-ceaf-8712-2084-8a7806856216/AppIcon-1x_U007emarketing-0-11-0-85-220-0.png/512x512bb.jpg" alt="GTS CRM app icon" class="pph-app-icon-img" loading="lazy">
-                      <div class="pph-icon-name">CRM GTS</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </article>
-
-          </div><!-- end proj-h-track -->
-
-          <!-- Progress bar -->
-          <div class="proj-progress-wrap" aria-hidden="true">
-            <div class="proj-progress-bar"></div>
-          </div>
-        </div><!-- end proj-pin-wrap -->
-
-        <!-- removed old grid --><div style="display:none"><div class="proj-grid">
-
-                <div class="proj-card featured" data-cat="health" data-modal="sanad">
-                    <div class="proj-num" aria-hidden="true">01</div>
-                    <div class="proj-glow" aria-hidden="true"></div>
-                    <div class="proj-body">
-                        <div class="proj-badges"><span class="pb-live">Live</span><span class="pb-feat">Featured</span></div>
-                        <h3>Sanad Rewards</h3>
-                        <p>Health &amp; wellness platform with Apple Health &amp; Google Fit integration, Lottie-animated calendar, and offline-first multimedia content.</p>
-                        <div class="proj-kpi">
-                            <span><strong>100K+</strong> Downloads</span>
-                            <span><strong>4.5★</strong> Rating</span>
-                            <span><strong>50K+</strong> Active Users</span>
-                        </div>
-                        <div class="proj-stack"><span>Flutter</span><span>BLoC</span><span>Firebase</span><span>Apple Health</span><span>Google Fit</span></div>
-                        <div class="proj-links">
-                            <a href="https://apps.apple.com/app/sanad-rewards/id6473984293" class="pj-btn" target="_blank" rel="noopener">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.07c1.27.27 2.09 1.35 3.1 1.35 1.29 0 2.05-1.05 3.59-1.12 1.65-.04 2.9.75 3.63 2.01-3.3 2.01-2.77 6.97.58 8.43-.36.84-.84 1.68-1.9 2.54zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
-                                App Store
-                            </a>
-                            <a href="https://play.google.com/store/apps/details?id=com.ubd.sanad" class="pj-btn" target="_blank" rel="noopener">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.18 23.76c.33.19.69.24 1.05.15l11.8-11.8-2.4-2.4-10.45 14.05zM20.77 9.72l-2.78-1.6-2.6 2.6 2.6 2.6 2.8-1.62c.8-.46.8-1.52-.02-1.98zM1.56.63C1.28.97 1.12 1.47 1.12 2.1v19.8c0 .63.16 1.13.44 1.47l.07.07 11.1-11.1v-.27L1.63.56l-.07.07z"/></svg>
-                                Play Store
-                            </a>
-                            <button class="pj-btn pj-detail" data-modal="sanad">Details →</button>
-                        </div>
-                    </div>
-                    <div class="proj-phone" aria-hidden="true">
-                        <div class="phone-frame">
-                            <div class="phone-notch"></div>
-                            <div class="phone-screen">
-                                <div class="ps-header">
-                                    <div class="ps-avatar"></div>
-                                    <div class="ps-info"><div class="ps-line short"></div><div class="ps-line med green-line"></div></div>
-                                    <div class="ps-bell"></div>
-                                </div>
-                                <div class="ps-ring-wrap">
-                                    <svg viewBox="0 0 100 100" class="ps-ring" aria-hidden="true">
-                                        <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="7"/>
-                                        <circle cx="50" cy="50" r="40" fill="none" stroke="#22C55E" stroke-width="7" stroke-dasharray="188 251" stroke-linecap="round" transform="rotate(-90 50 50)"/>
-                                    </svg>
-                                    <div class="ps-ring-label">75%</div>
-                                </div>
-                                <div class="ps-rows">
-                                    <div class="ps-row cyan-row"></div>
-                                    <div class="ps-row purple-row"></div>
-                                    <div class="ps-row green-row"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="proj-card" data-cat="sports" data-modal="league">
-                    <div class="proj-num" aria-hidden="true">02</div>
-                    <div class="proj-glow sports" aria-hidden="true"></div>
-                    <div class="proj-body">
-                        <div class="proj-badges"><span class="pb-live">Live</span></div>
-                        <h3>League Plus</h3>
-                        <p>Cross-platform sports prediction platform with real-time match data, custom league creation, and deep linking referral engine.</p>
-                        <div class="proj-kpi"><span><strong>30K+</strong> Active Users</span><span><strong>99.9%</strong> Uptime</span><span><strong>+25%</strong> Acquisition</span></div>
-                        <div class="proj-stack"><span>Flutter</span><span>GraphQL</span><span>BLoC</span><span>Firebase</span><span>Deep Links</span></div>
-                        <button class="pj-btn pj-detail" data-modal="league">Details →</button>
-                    </div>
-                </div>
-
-                <div class="proj-card" data-cat="health" data-modal="pulse">
-                    <div class="proj-num" aria-hidden="true">03</div>
-                    <div class="proj-glow pulse" aria-hidden="true"></div>
-                    <div class="proj-body">
-                        <div class="proj-badges"><span class="pb-live">Live</span></div>
-                        <h3>Pulse</h3>
-                        <p>Gym training &amp; fitness app with Pusher real-time chat, Pedometer step tracking, video player, and 40% FCM open rate.</p>
-                        <div class="proj-kpi"><span><strong>40%</strong> Notif Open Rate</span><span><strong>Real-time</strong> Chat</span></div>
-                        <div class="proj-stack"><span>Flutter</span><span>Pusher</span><span>GraphQL</span><span>Hive</span><span>Lottie</span></div>
-                        <button class="pj-btn pj-detail" data-modal="pulse">Details →</button>
-                    </div>
-                </div>
-
-                <div class="proj-card" data-cat="enterprise" data-modal="kitchen">
-                    <div class="proj-num" aria-hidden="true">04</div>
-                    <div class="proj-glow kitchen" aria-hidden="true"></div>
-                    <div class="proj-body">
-                        <div class="proj-badges"><span class="pb-live">Live</span></div>
-                        <h3>The Kitchen</h3>
-                        <p>Full restaurant POS &amp; management system with order management, inventory tracking, reporting, and offline-first architecture.</p>
-                        <div class="proj-kpi"><span><strong>Offline-First</strong></span><span><strong>Full</strong> POS System</span></div>
-                        <div class="proj-stack"><span>Flutter</span><span>BLoC</span><span>REST APIs</span><span>Local Storage</span></div>
-                        <button class="pj-btn pj-detail" data-modal="kitchen">Details →</button>
-                    </div>
-                </div>
-
-                <div class="proj-card" data-cat="health" data-modal="salute">
-                    <div class="proj-num" aria-hidden="true">05</div>
-                    <div class="proj-glow salute" aria-hidden="true"></div>
-                    <div class="proj-body">
-                        <div class="proj-badges"><span class="pb-live">Live</span></div>
-                        <h3>Salute</h3>
-                        <p>Medical transport &amp; emergency app with real-time ambulance tracking, driver-patient matching, and route optimisation.</p>
-                        <div class="proj-kpi"><span><strong>-30%</strong> No-Shows</span><span><strong>Real-time</strong> Tracking</span></div>
-                        <div class="proj-stack"><span>Flutter</span><span>Google Maps</span><span>Socket.IO</span><span>Firestore</span></div>
-                        <button class="pj-btn pj-detail" data-modal="salute">Details →</button>
-                    </div>
-                </div>
-
-                <div class="proj-card" data-cat="media" data-modal="islami">
-                    <div class="proj-num" aria-hidden="true">06</div>
-                    <div class="proj-glow islami" aria-hidden="true"></div>
-                    <div class="proj-body">
-                        <div class="proj-badges"><span class="pb-live">Live</span></div>
-                        <h3>Islami Hub</h3>
-                        <p>Islamic companion app with Quran reader, audio playback, geolocation prayer times, Qibla compass, and 85%+ FCM delivery rate.</p>
-                        <div class="proj-kpi"><span><strong>85%+</strong> FCM Delivery</span><span><strong>Qibla</strong> Compass</span></div>
-                        <div class="proj-stack"><span>Flutter</span><span>Cubit</span><span>Location</span><span>Firebase</span></div>
-                        <button class="pj-btn pj-detail" data-modal="islami">Details →</button>
-                    </div>
-                </div>
-
-                <div class="proj-card" data-cat="enterprise" data-modal="year">
-                    <div class="proj-num" aria-hidden="true">07</div>
-                    <div class="proj-glow year" aria-hidden="true"></div>
-                    <div class="proj-body">
-                        <div class="proj-badges"><span class="pb-live">Live</span></div>
-                        <h3>A Year in Review</h3>
-                        <p>Medical conference app with QR attendance, workshop enrollment, real-time Q&amp;A, and full Arabic/English RTL localisation.</p>
-                        <div class="proj-kpi"><span><strong>RTL</strong> Support</span><span><strong>Real-time</strong> Q&amp;A</span></div>
-                        <div class="proj-stack"><span>Flutter</span><span>Cubit</span><span>REST APIs</span><span>Firebase</span><span>i18n</span></div>
-                        <button class="pj-btn pj-detail" data-modal="year">Details →</button>
-                    </div>
-                </div>
-
-                <div class="proj-card" data-cat="enterprise" data-modal="crm">
-                    <div class="proj-num" aria-hidden="true">08</div>
-                    <div class="proj-glow crm" aria-hidden="true"></div>
-                    <div class="proj-body">
-                        <div class="proj-badges"><span class="pb-live">Live</span></div>
-                        <h3>GTS CRM</h3>
-                        <p>End-to-end CRM with client pipeline management, activity logging, sales dashboards, and offline sync for field sales teams.</p>
-                        <div class="proj-kpi"><span><strong>Offline</strong> Sync</span><span><strong>Sales</strong> Dashboard</span></div>
-                        <div class="proj-stack"><span>Flutter</span><span>BLoC</span><span>REST APIs</span><span>GoRouter</span></div>
-                        <button class="pj-btn pj-detail" data-modal="crm">Details →</button>
-                    </div>
-                </div>
-
-            </div>
-        </div></div><!-- /hidden old grid -->
-    </section>
-
-    <div class="wave-divider flip" aria-hidden="true">
-        <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,30 C360,0 1080,60 1440,30 L1440,60 L0,60 Z" fill="var(--wave-fill)"/></svg>
+<!-- ===== BOM ===== -->
+<section class="section" id="bom">
+  <div class="wrap">
+    <div class="sec-tag reveal"><span class="fig">Fig.04</span><h2>Bill of Materials</h2><span class="rule"></span><span class="tlabel">Components</span></div>
+    <div class="bomtable reveal">
+      <div class="hd"><div>Item</div><div>Designation</div><div class="h3">Class</div><div class="h4">Level</div></div>
+      <div class="row"><div class="it">01</div><div class="ds">Flutter &amp; Dart</div><div class="qt">Framework</div><div class="lv"><b>Expert</b></div></div>
+      <div class="row"><div class="it">02</div><div class="ds">BLoC / Cubit / Riverpod / GetX</div><div class="qt">State</div><div class="lv"><b>Expert</b></div></div>
+      <div class="row"><div class="it">03</div><div class="ds">Clean Architecture / MVVM</div><div class="qt">Pattern</div><div class="lv"><b>Expert</b></div></div>
+      <div class="row"><div class="it">04</div><div class="ds">REST / GraphQL / WebSockets</div><div class="qt">Data</div><div class="lv"><b>Expert</b></div></div>
+      <div class="row"><div class="it">05</div><div class="ds">Firebase / Firestore / Hive / SQLite</div><div class="qt">Backend</div><div class="lv">Advanced</div></div>
+      <div class="row"><div class="it">06</div><div class="ds">Android / Jetpack Compose / Kotlin</div><div class="qt">Native</div><div class="lv">Advanced</div></div>
+      <div class="row"><div class="it">07</div><div class="ds">Apple Health / Google Fit / Maps / Agora</div><div class="qt">Integrations</div><div class="lv">Advanced</div></div>
+      <div class="row"><div class="it">08</div><div class="ds">CI/CD / Fastlane / FCM / GoRouter</div><div class="qt">DevOps</div><div class="lv">Advanced</div></div>
+      <div class="row"><div class="it">09</div><div class="ds">Unit / Widget / Integration Testing</div><div class="qt">Quality</div><div class="lv">Advanced</div></div>
+      <div class="row"><div class="it">10</div><div class="ds">Technical Leadership / Mentoring</div><div class="qt">Team</div><div class="lv">Advanced</div></div>
     </div>
+  </div>
+</section>
 
-    <!-- ═══════════════ SKILLS ═══════════════ -->
-    <section id="skills" class="section">
-        <div class="container">
-            <header class="section-head">
-                <span class="sec-num">04</span>
-                <h2 class="sec-title">Skills</h2>
-                <span class="sec-line"></span>
-            </header>
-
-            <div class="skills-layout">
-                <div class="skill-col">
-                    <h3 class="skill-cat">Mobile Development</h3>
-                    <div class="skill-list">
-                        <div class="sk-item"><div class="sk-meta"><span>Flutter</span><span class="sk-tag">Expert</span></div><div class="sk-track"><div class="sk-fill" data-w="98"></div></div></div>
-                        <div class="sk-item"><div class="sk-meta"><span>Dart</span><span class="sk-tag">Expert</span></div><div class="sk-track"><div class="sk-fill" data-w="95"></div></div></div>
-                        <div class="sk-item"><div class="sk-meta"><span>Kotlin / Jetpack Compose</span><span class="sk-tag">Advanced</span></div><div class="sk-track"><div class="sk-fill" data-w="75"></div></div></div>
-                        <div class="sk-item"><div class="sk-meta"><span>Java / Android SDK</span><span class="sk-tag">Advanced</span></div><div class="sk-track"><div class="sk-fill" data-w="70"></div></div></div>
-                    </div>
-                </div>
-                <div class="skill-col">
-                    <h3 class="skill-cat">Architecture &amp; State</h3>
-                    <div class="skill-list">
-                        <div class="sk-item"><div class="sk-meta"><span>Clean Architecture</span><span class="sk-tag">Expert</span></div><div class="sk-track"><div class="sk-fill" data-w="95"></div></div></div>
-                        <div class="sk-item"><div class="sk-meta"><span>BLoC / Cubit</span><span class="sk-tag">Expert</span></div><div class="sk-track"><div class="sk-fill" data-w="92"></div></div></div>
-                        <div class="sk-item"><div class="sk-meta"><span>Riverpod / Provider</span><span class="sk-tag">Advanced</span></div><div class="sk-track"><div class="sk-fill" data-w="80"></div></div></div>
-                        <div class="sk-item"><div class="sk-meta"><span>SOLID / Design Patterns</span><span class="sk-tag">Expert</span></div><div class="sk-track"><div class="sk-fill" data-w="85"></div></div></div>
-                    </div>
-                </div>
-                <div class="skill-col">
-                    <h3 class="skill-cat">Backend &amp; APIs</h3>
-                    <div class="skill-list">
-                        <div class="sk-item"><div class="sk-meta"><span>Firebase / Firestore</span><span class="sk-tag">Expert</span></div><div class="sk-track"><div class="sk-fill" data-w="90"></div></div></div>
-                        <div class="sk-item"><div class="sk-meta"><span>REST APIs</span><span class="sk-tag">Expert</span></div><div class="sk-track"><div class="sk-fill" data-w="88"></div></div></div>
-                        <div class="sk-item"><div class="sk-meta"><span>GraphQL</span><span class="sk-tag">Advanced</span></div><div class="sk-track"><div class="sk-fill" data-w="75"></div></div></div>
-                        <div class="sk-item"><div class="sk-meta"><span>WebSockets</span><span class="sk-tag">Advanced</span></div><div class="sk-track"><div class="sk-fill" data-w="72"></div></div></div>
-                    </div>
-                </div>
-                <div class="skill-col">
-                    <h3 class="skill-cat">DevOps &amp; Tooling</h3>
-                    <div class="skill-list">
-                        <div class="sk-item"><div class="sk-meta"><span>Git / GitHub</span><span class="sk-tag">Expert</span></div><div class="sk-track"><div class="sk-fill" data-w="88"></div></div></div>
-                        <div class="sk-item"><div class="sk-meta"><span>CI/CD / Fastlane</span><span class="sk-tag">Advanced</span></div><div class="sk-track"><div class="sk-fill" data-w="78"></div></div></div>
-                        <div class="sk-item"><div class="sk-meta"><span>Unit / Widget / Integration Tests</span><span class="sk-tag">Advanced</span></div><div class="sk-track"><div class="sk-fill" data-w="75"></div></div></div>
-                        <div class="sk-item"><div class="sk-meta"><span>Agile / Scrum / Leadership</span><span class="sk-tag">Expert</span></div><div class="sk-track"><div class="sk-fill" data-w="85"></div></div></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tech-cloud" role="list" aria-label="Technology tags">
-                <span class="tc-tag" role="listitem">Flutter</span><span class="tc-tag" role="listitem">Dart</span>
-                <span class="tc-tag" role="listitem">Firebase</span><span class="tc-tag" role="listitem">BLoC</span>
-                <span class="tc-tag" role="listitem">Clean Architecture</span><span class="tc-tag" role="listitem">GraphQL</span>
-                <span class="tc-tag" role="listitem">Kotlin</span><span class="tc-tag" role="listitem">Jetpack Compose</span>
-                <span class="tc-tag" role="listitem">REST APIs</span><span class="tc-tag" role="listitem">CI/CD</span>
-                <span class="tc-tag" role="listitem">Google Maps SDK</span><span class="tc-tag" role="listitem">WebSockets</span>
-                <span class="tc-tag" role="listitem">Riverpod</span><span class="tc-tag" role="listitem">Fastlane</span>
-                <span class="tc-tag" role="listitem">Deep Links</span><span class="tc-tag" role="listitem">FCM</span>
-                <span class="tc-tag" role="listitem">Lottie</span><span class="tc-tag" role="listitem">GoRouter</span>
-            </div>
-        </div>
-    </section>
-
-    <div class="wave-divider" aria-hidden="true">
-        <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z" fill="var(--wave-fill)"/></svg>
+<!-- ===== CREDENTIALS ===== -->
+<section class="section" id="creds">
+  <div class="wrap">
+    <div class="sec-tag reveal"><span class="fig">Fig.05</span><h2>Credentials</h2><span class="rule"></span><span class="tlabel">Certified</span></div>
+    <div class="creds-grid reveal">
+      <div class="creds-col">
+        <div class="creds-h tlabel">Education</div>
+        <div class="cred"><div class="cy">2016 — 2020</div><div class="cn">BSc Computer Science</div><div class="cd">Faculty of Computer &amp; Information Sciences, Mansoura University (FCIS)</div></div>
+        <div class="cred"><div class="cy">2019</div><div class="cn">Full-Stack .NET Web Development</div><div class="cd">Information Technology Institute (ITI)</div></div>
+      </div>
+      <div class="creds-col">
+        <div class="creds-h tlabel">Licences &amp; Certifications</div>
+        <div class="cred"><div class="cy">MAR 2025</div><div class="cn">Flutter Advanced — Clean Architecture &amp; MVVM</div><div class="cd">Udemy</div></div>
+        <div class="cred"><div class="cy">MAR 2025</div><div class="cn">Certified Software Engineer</div><div class="cd">HackerRank</div></div>
+        <div class="cred"><div class="cy">2020 — 2021</div><div class="cn">Clean Architecture &amp; Testing Masterclass</div><div class="cd">Udemy</div></div>
+        <div class="cred"><div class="cy">2018</div><div class="cn">Google Developer Challenge Scholarship</div><div class="cd">Mobile Web</div></div>
+      </div>
     </div>
+  </div>
+</section>
 
-    <!-- ═══════════════ CERTIFICATIONS ═══════════════ -->
-    <section id="certs" class="section section-alt">
-        <div class="container">
-            <header class="section-head">
-                <span class="sec-num">05</span>
-                <h2 class="sec-title">Certifications</h2>
-                <span class="sec-line"></span>
-            </header>
-
-            <div class="certs-grid">
-                <div class="cert-card">
-                    <div class="cert-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                    </div>
-                    <div class="cert-body">
-                        <div class="cert-issuer">Udemy</div>
-                        <div class="cert-name">Flutter Advanced — Clean Architecture &amp; MVVM</div>
-                        <div class="cert-date">Mar 2025</div>
-                    </div>
-                    <a href="https://www.udemy.com/certificate/UC-95f9acdd-7725-4d5b-b000-a679dc4ff499/" class="cert-link" target="_blank" rel="noopener" aria-label="View Flutter Advanced certification">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
-                        View
-                    </a>
-                </div>
-
-                <div class="cert-card">
-                    <div class="cert-icon cert-icon-green">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
-                    </div>
-                    <div class="cert-body">
-                        <div class="cert-issuer">HackerRank</div>
-                        <div class="cert-name">Certified Software Engineer</div>
-                        <div class="cert-date">Mar 2025</div>
-                    </div>
-                    <a href="https://www.hackerrank.com/certificates/0f608c8586cd" class="cert-link" target="_blank" rel="noopener" aria-label="View HackerRank certification">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
-                        View
-                    </a>
-                </div>
-
-                <div class="cert-card">
-                    <div class="cert-icon cert-icon-purple">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                    </div>
-                    <div class="cert-body">
-                        <div class="cert-issuer">Udemy</div>
-                        <div class="cert-name">Clean Architecture &amp; Testing Masterclass</div>
-                        <div class="cert-date">Dec 2020 – Jan 2021</div>
-                    </div>
-                </div>
-
-                <div class="cert-card">
-                    <div class="cert-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-                    </div>
-                    <div class="cert-body">
-                        <div class="cert-issuer">Udemy</div>
-                        <div class="cert-name">Flutter BLoC Pattern</div>
-                        <div class="cert-date">Feb – Mar 2020</div>
-                    </div>
-                </div>
-
-                <div class="cert-card">
-                    <div class="cert-icon cert-icon-yellow">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    </div>
-                    <div class="cert-body">
-                        <div class="cert-issuer">Google</div>
-                        <div class="cert-name">Developer Challenge Scholarship: Mobile Web</div>
-                        <div class="cert-date">May 2018</div>
-                    </div>
-                </div>
-
-                <div class="cert-card">
-                    <div class="cert-icon cert-icon-blue">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                    </div>
-                    <div class="cert-body">
-                        <div class="cert-issuer">Microsoft</div>
-                        <div class="cert-name">Student Partnership (MSP) Internship</div>
-                        <div class="cert-date">Feb – May 2017</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <div class="wave-divider flip" aria-hidden="true">
-        <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z" fill="var(--wave-fill)"/></svg>
+<!-- ===== REQUISITION ===== -->
+<section class="section" id="contact">
+  <div class="wrap req">
+    <span class="tlabel reveal">Fig.06 — Requisition</span>
+    <div class="reveal" style="margin-top:20px;"><a class="big" href="mailto:devahmedelgharbawy@gmail.com"><span>Request</span><br><span class="o">Build</span></a></div>
+    <p class="sub reveal">Have a product that needs to feel engineered, not assembled? I'm open to senior Flutter roles and select freelance commissions — based in Cairo, working worldwide.</p>
+    <div class="acts reveal">
+      <a class="btn pri" href="mailto:devahmedelgharbawy@gmail.com" data-magnetic>Email me ⟶</a>
+      <a class="btn" href="resume.pdf" download data-magnetic>Download spec sheet (CV)</a>
     </div>
+  </div>
+</section>
 
-    <!-- ═══════════════ CONTACT ═══════════════ -->
-    <section id="contact" class="section">
-        <div class="container">
-            <header class="section-head">
-                <span class="sec-num">06</span>
-                <h2 class="sec-title">Contact</h2>
-                <span class="sec-line"></span>
-            </header>
+<div class="titleblock"><div class="wrap"><div class="tb-grid">
+  <div class="tb-cell"><div class="k">Engineer</div><div class="v am">A. R. Elgharbawy</div></div>
+  <div class="tb-cell"><div class="k">Discipline</div><div class="v">Senior Flutter Developer</div></div>
+  <div class="tb-cell"><div class="k">Station</div><div class="v">Cairo, Egypt</div></div>
+  <div class="tb-cell"><div class="k">Contact</div><div class="v">+20 111 664 4523</div></div>
+</div></div></div>
+<footer class="foot wrap">
+  <div class="copy tlabel">© 2026 Ahmed Reda Elgharbawy — Engineered with Flutter</div>
+  <div class="socials"><a href="https://github.com/devahmedelgharbawy" target="_blank" rel="noopener">GitHub</a><a href="https://linkedin.com/in/devreda" target="_blank" rel="noopener">LinkedIn</a><a href="mailto:devahmedelgharbawy@gmail.com">Email</a></div>
+</footer>
 
-            <div class="contact-layout">
-                <div class="contact-left">
-                    <h3 class="contact-heading">Let's build something <span class="accent-text">great</span> together.</h3>
-                    <p class="contact-body">I'm open to new opportunities — full-time, contract, or interesting collaborations. If you have a project that needs a senior Flutter developer, let's talk.</p>
+<script src="https://unpkg.com/three@0.149.0/build/three.min.js"></script>
+<script>
+/* =====================================================================
+   TEARDOWN ENGINE — Three.js WebGL exploded view
+   ===================================================================== */
+(function(){
+  "use strict";
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+  const lerp=(a,b,t)=>a+(b-a)*t;
+  const smooth=(e0,e1,x)=>{ const t=clamp((x-e0)/(e1-e0),0,1); return t*t*(3-2*t); };
+  const DEG=Math.PI/180;
 
-                    <div class="contact-channels">
-                        <a href="mailto:devahmedelgharbawy@gmail.com" class="ch-link">
-                            <div class="ch-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                            </div>
-                            <div>
-                                <div class="ch-label">Email</div>
-                                <div class="ch-value">devahmedelgharbawy@gmail.com</div>
-                            </div>
-                            <button class="copy-btn" data-copy="devahmedelgharbawy@gmail.com" aria-label="Copy email address">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                            </button>
-                        </a>
-                        <a href="https://linkedin.com/in/devreda" target="_blank" rel="noopener" class="ch-link">
-                            <div class="ch-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                            </div>
-                            <div>
-                                <div class="ch-label">LinkedIn</div>
-                                <div class="ch-value">linkedin.com/in/devreda</div>
-                            </div>
-                            <svg class="ch-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                        </a>
-                        <a href="https://github.com/AhmedRedagh" target="_blank" rel="noopener" class="ch-link">
-                            <div class="ch-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                            </div>
-                            <div>
-                                <div class="ch-label">GitHub</div>
-                                <div class="ch-value">github.com/AhmedRedagh</div>
-                            </div>
-                            <svg class="ch-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                        </a>
-                    </div>
-                </div>
+  const LAYERS=[
+    {id:"L05",name:"Motion",sub:"Display assembly",type:"motion",
+     hw:"6.9″ ProMotion OLED · 120 Hz",
+     desc:"The surface nobody notices — until it's gone. Every tap, drag and transition is choreographed to feel instant and physical.",
+     specs:["60–120 fps adaptive","Implicit + explicit anim","Shared-axis transitions","Haptic synchronisation"]},
+    {id:"L04",name:"Widget Tree",sub:"Super Retina XDR panel",type:"widget",
+     hw:"2868 × 1320 · 460 ppi",
+     desc:"A composable tree of widgets renders the interface — declarative, responsive, and driven entirely by a design system.",
+     specs:["Composable widgets","Responsive layouts","Design-system tokens","Pixel-honest rendering"]},
+    {id:"L03",name:"State",sub:"Logic board",type:"state",
+     hw:"A19 Pro · 6-core GPU · 12 GB",
+     desc:"A reactive graph moves data through the app in one direction, so the UI is always a pure function of state.",
+     specs:["Riverpod / Bloc","Unidirectional flow","Testable notifiers","Zero wasted rebuilds"]},
+    {id:"L02",name:"Domain",sub:"Power core",type:"domain",
+     hw:"Dual-cell · 4,832 mAh",
+     desc:"Business rules live at the centre — entities and use-cases that know nothing about Flutter, the network, or the database.",
+     specs:["Entities & use-cases","Repository contracts","Framework-agnostic","SOLID boundaries"]},
+    {id:"L01",name:"Platform",sub:"Titanium frame",type:"platform",
+     hw:"Grade-5 Ti · 48 MP Fusion ×3",
+     desc:"At the base: native channels, persistence and the network — the metal the whole machine stands on.",
+     specs:["Method channels","Firebase / REST","Local persistence","CI/CD pipeline"]}
+  ];
+  const N=LAYERS.length;
 
-                <form class="contact-form" id="contact-form" action="https://formspree.io/f/devahmedelgharbawy@gmail.com" method="POST" novalidate>
-                    <div class="cf-field">
-                        <label for="cf-name">Name</label>
-                        <input type="text" id="cf-name" name="name" placeholder="Your name" required autocomplete="name">
-                    </div>
-                    <div class="cf-field">
-                        <label for="cf-email">Email</label>
-                        <input type="email" id="cf-email" name="email" placeholder="your@email.com" required autocomplete="email">
-                    </div>
-                    <div class="cf-field">
-                        <label for="cf-msg">Message</label>
-                        <textarea id="cf-msg" name="message" rows="5" placeholder="Tell me about your project..." required></textarea>
-                    </div>
-                    <button type="submit" class="btn-submit">
-                        <span class="submit-text">Send Message</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                    </button>
-                </form>
-            </div>
-        </div>
-    </section>
+  const teardown=document.querySelector(".teardown");
+  const stage=document.getElementById("stage");
+  const scene2d=document.getElementById("scene");
+  const canvas=document.getElementById("gl");
+  const heroOv=document.getElementById("heroOv"), hud=document.getElementById("hud");
+  const hudId=document.getElementById("hudId"), hudName=document.getElementById("hudName"), hudSub=document.getElementById("hudSub");
+  const readout=document.getElementById("readout"), roDesc=document.getElementById("roDesc"), roSpecs=document.getElementById("roSpecs");
+  const cue=document.getElementById("cue"), rail=document.getElementById("rail");
+  const dmBtn=document.getElementById("dismantle"), dmArrow=document.getElementById("dmArrow");
+  const lead3d=document.getElementById("lead3d"), leadLine=lead3d.querySelector("line"), leadDot=lead3d.querySelector("circle");
+  const tag3d=document.getElementById("tag3d"), tag3dId=document.getElementById("tag3dId"), tag3dNm=document.getElementById("tag3dNm");
 
-    <!-- ═══════════════ FOOTER ═══════════════ -->
-    <footer id="footer">
-        <div class="container">
-            <div class="footer-inner">
-                <div class="footer-logo">[AR]</div>
-                <p class="footer-copy">Designed &amp; Built by <span class="accent-text">Ahmed Reda</span> · Senior Flutter Developer</p>
-                <div class="footer-links">
-                    <a href="https://github.com/AhmedRedagh" target="_blank" rel="noopener">GitHub</a>
-                    <a href="https://linkedin.com/in/devreda" target="_blank" rel="noopener">LinkedIn</a>
-                    <a href="mailto:devahmedelgharbawy@gmail.com">Email</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+  LAYERS.forEach((L)=>{ const t=document.createElement("div"); t.className="t"; t.innerHTML='<span>'+L.id+' · '+L.name+'</span>'; rail.appendChild(t); });
+  const ticks=[...rail.children];
 
-    <script src="main.js"></script>
+  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  let accentHex=cssVar("--accent")||"#ff6a1a";
+
+  /* ---------- schematic textures (canvas line-art) ---------- */
+  function makeTex(type){
+    const c=document.createElement("canvas"); c.width=512; c.height=1024; const g=c.getContext("2d");
+    g.scale(2,2); /* 2× resolution */
+    /* dark panel fill so line art is visible against the slab */
+    g.fillStyle="#0c1420"; g.fillRect(0,0,256,512);
+    g.strokeStyle="#ffffff"; g.fillStyle="#ffffff"; g.lineJoin="round";
+    const CX=128, CY=256;
+    /* engineering drawing helpers */
+    function txt(s,px,py,sz,al){ g.save(); g.globalAlpha=.9; g.font="700 "+(sz||9)+"px monospace"; g.textAlign=al||"center"; g.fillText(s,px,py); g.restore(); }
+    function hdim(y,x1,x2,label,off){
+      var dy=off||12; g.save(); g.globalAlpha=.5; g.lineWidth=.8;
+      g.beginPath(); g.moveTo(x1,y+dy); g.lineTo(x2,y+dy); g.stroke();
+      g.beginPath(); g.moveTo(x1,y+dy-3); g.lineTo(x1,y+dy+3); g.moveTo(x2,y+dy-3); g.lineTo(x2,y+dy+3); g.stroke();
+      g.setLineDash([2,3]); g.beginPath(); g.moveTo(x1,y); g.lineTo(x1,y+dy-1); g.moveTo(x2,y); g.lineTo(x2,y+dy-1); g.stroke(); g.setLineDash([]);
+      g.globalAlpha=.75; g.font="700 7px monospace"; g.textAlign="center"; g.fillText(label,(x1+x2)/2,y+dy-2); g.restore();
+    }
+    function vdim(xb,y1,y2,label,off){
+      var dx=off||12; g.save(); g.globalAlpha=.5; g.lineWidth=.8;
+      g.beginPath(); g.moveTo(xb+dx,y1); g.lineTo(xb+dx,y2); g.stroke();
+      g.beginPath(); g.moveTo(xb+dx-3,y1); g.lineTo(xb+dx+3,y1); g.moveTo(xb+dx-3,y2); g.lineTo(xb+dx+3,y2); g.stroke();
+      g.setLineDash([2,3]); g.beginPath(); g.moveTo(xb,y1); g.lineTo(xb+dx-1,y1); g.moveTo(xb,y2); g.lineTo(xb+dx-1,y2); g.stroke(); g.setLineDash([]);
+      g.save(); g.globalAlpha=.75; g.translate(xb+dx+3,(y1+y2)/2); g.rotate(-Math.PI/2); g.font="700 7px monospace"; g.textAlign="center"; g.fillText(label,0,0); g.restore(); g.restore();
+    }
+    function hatch(rx,ry,rw,rh,sp){
+      g.save(); g.globalAlpha=.14; g.lineWidth=.6; g.beginPath(); g.rect(rx,ry,rw,rh); g.clip();
+      for(var d=-rh;d<rw+rh;d+=(sp||8)){ g.beginPath(); g.moveTo(rx+d,ry); g.lineTo(rx+d-rh,ry+rh); g.stroke(); } g.restore();
+    }
+    function callout(label,x1,y1,x2,y2){
+      g.save(); g.globalAlpha=.55; g.lineWidth=.8; g.beginPath(); g.moveTo(x1,y1); g.lineTo(x2,y2); g.stroke();
+      g.beginPath(); g.arc(x1,y1,2,0,7); g.fill();
+      g.globalAlpha=.8; g.font="700 7px monospace"; g.textAlign="left"; g.fillText(label,x2+4,y2+3); g.restore();
+    }
+    if(type==="motion"){ /* DISPLAY ASSEMBLY — front orthographic */
+      g.lineWidth=2; g.globalAlpha=.9; g.beginPath(); g.roundRect(38,32,180,448,22); g.stroke();
+      g.lineWidth=1.4; g.globalAlpha=.8; g.beginPath(); g.roundRect(46,50,164,412,18); g.stroke();
+      hatch(46,50,164,412,8);
+      g.lineWidth=1.8; g.globalAlpha=1; g.beginPath(); g.roundRect(96,58,64,18,9); g.stroke();
+      g.beginPath(); g.arc(148,67,3.5,0,7); g.stroke();
+      hdim(32,38,218,"77.6",-14); vdim(218,32,480,"163.0",10);
+      g.globalAlpha=.6; g.lineWidth=.8; g.setLineDash([2,2]);
+      g.beginPath(); g.moveTo(38,54); g.lineTo(60,54); g.moveTo(60,32); g.lineTo(60,54); g.stroke(); g.setLineDash([]);
+      txt("R22",56,48,7);
+      g.globalAlpha=.5; txt("9:41",78,70,8); [192,200,208].forEach(function(px,i){ g.fillRect(px,62,2.5,6+i*1.5); });
+      g.lineWidth=1; g.globalAlpha=.3;
+      g.beginPath(); g.roundRect(56,160,144,32,6); g.stroke();
+      g.beginPath(); g.roundRect(56,204,144,32,6); g.stroke();
+      g.beginPath(); g.roundRect(56,248,144,32,6); g.stroke();
+      g.lineWidth=2; g.globalAlpha=.7;
+      g.fillRect(36,128,3,18); g.fillRect(36,166,3,34); g.fillRect(36,210,3,34);
+      g.fillRect(219,184,3,38);
+      g.lineWidth=1; g.globalAlpha=.5; g.fillRect(36,336,3,24);
+      callout("COVER GLASS",128,42,166,26); callout("DYNAMIC ISLAND",128,76,158,90);
+      callout("ACTION BTN",38,136,12,128); callout("POWER",220,202,236,196);
+      g.globalAlpha=.8; txt("DISPLAY ASSEMBLY",CX,498,8); txt("DETAIL A",CX,16,7);
+    } else if(type==="widget"){ /* OLED PANEL — panel + flex cables */
+      g.lineWidth=2; g.globalAlpha=.85; g.strokeRect(42,48,172,370);
+      g.lineWidth=.5; g.globalAlpha=.18;
+      for(var gx=54;gx<214;gx+=14){ g.beginPath(); g.moveTo(gx,48); g.lineTo(gx,418); g.stroke(); }
+      for(var gy=60;gy<418;gy+=14){ g.beginPath(); g.moveTo(42,gy); g.lineTo(214,gy); g.stroke(); }
+      g.globalAlpha=.65; [[80,112],[144,176],[112,256],[176,144],[96,320],[160,288]].forEach(function(p){ g.fillRect(p[0]-1.5,p[1]-1.5,3,3); });
+      g.lineWidth=1.4; g.globalAlpha=.8; g.beginPath(); g.roundRect(92,54,72,22,11); g.stroke();
+      g.setLineDash([3,3]); g.beginPath(); g.roundRect(86,48,84,34,14); g.stroke(); g.setLineDash([]);
+      g.lineWidth=1.6; g.globalAlpha=.8; g.beginPath(); g.moveTo(100,418); g.lineTo(100,448); g.lineTo(156,448); g.lineTo(156,418); g.stroke();
+      g.strokeRect(90,450,76,20);
+      g.lineWidth=.8; for(var f=96;f<162;f+=5){ g.beginPath(); g.moveTo(f,450); g.lineTo(f,470); g.stroke(); }
+      g.lineWidth=1.2; g.globalAlpha=.7; g.strokeRect(108,472,40,14); txt("ZIF",CX,483,7);
+      hdim(48,42,214,"161.0",-14); vdim(214,48,418,"111.8",10);
+      callout("OLED PANEL",128,100,168,86); callout("FLEX CABLE",128,440,168,434);
+      g.globalAlpha=.8; txt("OLED PANEL ASSY",CX,500,8); txt("DETAIL B",CX,16,7);
+    } else if(type==="state"){ /* LOGIC BOARD — PCB with components */
+      g.lineWidth=2; g.globalAlpha=.85; g.beginPath(); g.roundRect(34,70,188,360,8); g.stroke();
+      g.lineWidth=.7; g.globalAlpha=.25;
+      [[48,150,210,150],[48,200,140,200],[120,200,210,330],[48,370,210,370],[70,70,70,430],[186,100,186,430],[48,260,100,260],[156,260,210,260]].forEach(function(t){ g.beginPath(); g.moveTo(t[0],t[1]); g.lineTo(t[2],t[3]); g.stroke(); });
+      g.globalAlpha=.35; for(var i=0;i<24;i++){ var vx=50+(i*37)%170, vy=90+(i*53)%320; g.beginPath(); g.arc(vx,vy,1.5,0,7); g.fill(); }
+      g.lineWidth=2.4; g.globalAlpha=1; g.strokeRect(86,198,84,84);
+      g.lineWidth=1; g.globalAlpha=.45; g.strokeRect(94,206,68,68);
+      g.globalAlpha=.4; for(var bx=100;bx<=156;bx+=7)for(var by=212;by<=268;by+=7){ g.beginPath(); g.arc(bx,by,1.6,0,7); g.fill(); }
+      g.globalAlpha=1; txt("A19",CX,234,14); txt("PRO",CX,250,10);
+      g.lineWidth=1.6; g.globalAlpha=.8; g.strokeRect(46,100,62,40); g.globalAlpha=.5; txt("MODEM",77,124,7);
+      g.globalAlpha=.8; g.strokeRect(148,100,62,40); g.globalAlpha=.5; txt("NAND",179,124,7);
+      g.lineWidth=1.4; g.globalAlpha=.7; g.strokeRect(50,310,50,34); g.globalAlpha=.5; txt("PMIC",75,332,7);
+      g.strokeRect(156,310,52,34); g.globalAlpha=.5; txt("UWB",182,332,7);
+      g.lineWidth=1.6; g.globalAlpha=.6; [[50,400],[66,400],[82,400],[186,400],[202,400]].forEach(function(p){ g.fillRect(p[0]-2,p[1]-6,4,12); });
+      g.globalAlpha=.45; [[54,84],[202,84],[54,420],[202,420]].forEach(function(p){ g.beginPath(); g.arc(p[0],p[1],3,0,7); g.stroke(); g.beginPath(); g.arc(p[0],p[1],1,0,7); g.fill(); });
+      hdim(70,34,222,"BOARD",-14);
+      callout("SoC A19 PRO",170,240,210,222); callout("RF MODEM",108,120,142,112);
+      g.globalAlpha=.8; txt("LOGIC BOARD",CX,456,8); txt("DETAIL C",CX,16,7);
+    } else if(type==="domain"){ /* BATTERY — dual-cell */
+      g.lineWidth=2; g.globalAlpha=.85; g.beginPath(); g.roundRect(44,90,168,170,6); g.stroke(); hatch(44,90,168,170,10);
+      g.beginPath(); g.roundRect(44,280,168,140,6); g.stroke(); hatch(44,280,168,140,10);
+      g.lineWidth=2; g.globalAlpha=1; g.fillRect(116,78,24,14); txt("+",CX,90,11);
+      g.fillRect(116,418,24,14); txt("–",CX,430,11);
+      g.lineWidth=1.6; g.globalAlpha=.8; g.strokeRect(72,264,112,16);
+      g.lineWidth=.8; for(var bx2=80;bx2<180;bx2+=8){ g.beginPath(); g.moveTo(bx2,264); g.lineTo(bx2,280); g.stroke(); }
+      g.lineWidth=1.4; g.globalAlpha=.6;
+      g.beginPath(); g.moveTo(100,260); g.lineTo(100,248); g.lineTo(68,248); g.lineTo(68,264); g.stroke();
+      g.beginPath(); g.moveTo(156,280); g.lineTo(156,296); g.lineTo(188,296); g.lineTo(188,280); g.stroke();
+      g.lineWidth=1; g.globalAlpha=.5; g.strokeRect(62,130,34,20); txt("\u26A0",79,146,10);
+      hdim(90,44,212,"4,832 mAh",-14); vdim(212,90,260,"CELL 1",10); vdim(212,280,420,"CELL 2",10);
+      callout("BMS",128,272,162,258);
+      g.globalAlpha=.8; txt("BATTERY ASSEMBLY",CX,456,8); txt("DETAIL D",CX,16,7);
+    } else { /* BACK GLASS + TITANIUM FRAME */
+      g.lineWidth=2.2; g.globalAlpha=.9; g.beginPath(); g.roundRect(38,32,180,448,22); g.stroke();
+      g.lineWidth=1; g.globalAlpha=.35; g.beginPath(); g.roundRect(44,38,168,436,18); g.stroke();
+      g.lineWidth=2; g.globalAlpha=1; g.beginPath(); g.roundRect(48,50,106,106,22); g.stroke();
+      [[78,82],[130,82],[104,128]].forEach(function(p){
+        g.lineWidth=1.8; g.globalAlpha=1; g.beginPath(); g.arc(p[0],p[1],17,0,7); g.stroke();
+        g.globalAlpha=.55; g.beginPath(); g.arc(p[0],p[1],11,0,7); g.stroke();
+        g.globalAlpha=.25; g.beginPath(); g.arc(p[0],p[1],5,0,7); g.fill();
+      });
+      g.globalAlpha=.8; g.beginPath(); g.arc(140,128,5,0,7); g.fill();
+      g.globalAlpha=.45; g.beginPath(); g.arc(140,110,4,0,7); g.stroke();
+      g.lineWidth=1.4; g.globalAlpha=.35; g.beginPath(); g.arc(CX,300,46,0,7); g.stroke();
+      g.setLineDash([4,4]); g.beginPath(); g.arc(CX,300,44,0,7); g.stroke(); g.setLineDash([]);
+      g.lineWidth=1.4; g.globalAlpha=.4; g.setLineDash([6,6]);
+      g.beginPath(); g.moveTo(38,178); g.lineTo(218,178); g.moveTo(38,392); g.lineTo(218,392); g.stroke(); g.setLineDash([]);
+      g.globalAlpha=.22; g.beginPath(); g.arc(CX,290,14,0,7); g.stroke();
+      g.lineWidth=1.4; g.globalAlpha=.5; g.fillRect(218,320,4,28);
+      g.globalAlpha=.55; [[62,466],[194,466]].forEach(function(p){
+        g.beginPath(); g.arc(p[0],p[1],4,0,7); g.stroke();
+        for(var a=0;a<5;a++){ var r2=2.5, ang=a*Math.PI*2/5-Math.PI/2; g.beginPath(); g.moveTo(p[0],p[1]); g.lineTo(p[0]+r2*Math.cos(ang),p[1]+r2*Math.sin(ang)); g.stroke(); }
+      });
+      hdim(32,38,218,"77.6",-14); vdim(218,32,480,"163.0",14);
+      hdim(50,48,154,"CAM MODULE",-8);
+      callout("48MP FUSION",130,82,170,68); callout("MAGSAFE",CX+46,300,196,292); callout("Ti FRAME",38,256,14,248);
+      g.globalAlpha=.8; txt("BACK GLASS + FRAME",CX,498,8); txt("DETAIL E",CX,16,7);
+    }
+    const tex=new THREE.CanvasTexture(c); tex.anisotropy=4; return tex;
+  }
+
+  /* ---------- THREE setup ---------- */
+  let renderer,sceneT,camera,group,pointLight,pins,pinGeo;
+  const W=160,H=340,T=14,R=20;
+  const layerObjs=[]; // {grp,body,bodyMat,edgesMat,faceMat}
+  let glW=1,glH=1,fit=1;
+  let ok=false;
+
+  function roundedShape(w,h,r){
+    const s=new THREE.Shape(); const x=-w/2,y=-h/2;
+    s.moveTo(x+r,y); s.lineTo(x+w-r,y); s.absarc(x+w-r,y+r,r,-Math.PI/2,0,false);
+    s.lineTo(x+w,y+h-r); s.absarc(x+w-r,y+h-r,r,0,Math.PI/2,false);
+    s.lineTo(x+r,y+h); s.absarc(x+r,y+h-r,r,Math.PI/2,Math.PI,false);
+    s.lineTo(x,y+r); s.absarc(x+r,y+r,r,Math.PI,Math.PI*1.5,false);
+    return s;
+  }
+
+  function initGL(){
+    if(!window.THREE){ ok=false; return; }
+    try{
+      renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true,alpha:true,powerPreference:"high-performance"});
+      renderer.setClearColor(0x000000,0);
+    }catch(e){ ok=false; return; }
+    sceneT=new THREE.Scene();
+    camera=new THREE.PerspectiveCamera(30,1,1,6000); camera.position.set(0,0,760);
+    group=new THREE.Group(); sceneT.add(group);
+
+    // lights
+    sceneT.add(new THREE.AmbientLight(0x6a7a90,1.6));
+    const key=new THREE.DirectionalLight(0xffffff,1.6); key.position.set(0.6,1,1.2); sceneT.add(key);
+    const rim=new THREE.DirectionalLight(0x36e0cf,0.7); rim.position.set(-1,-0.4,-1); sceneT.add(rim);
+    const fill=new THREE.DirectionalLight(0xffffff,0.4); fill.position.set(-0.5,0.3,0.8); sceneT.add(fill);
+    pointLight=new THREE.PointLight(new THREE.Color(accentHex),0,720,2); group.add(pointLight);
+
+    const bodyGeo=new THREE.ExtrudeGeometry(roundedShape(W,H,R),{depth:T,bevelEnabled:true,bevelThickness:1.6,bevelSize:1.6,bevelSegments:2,steps:1});
+    bodyGeo.center();
+    const edgeGeo=new THREE.EdgesGeometry(bodyGeo,28);
+    const faceGeo=new THREE.PlaneGeometry(W,H);
+    const backFaceGeo=new THREE.PlaneGeometry(W,H);
+
+    LAYERS.forEach((L,i)=>{
+      const grp=new THREE.Group();
+      var bodyColors=[0x192840,0x162438,0x1a2c42,0x1e3040,0x22343e];
+      const bodyMat=new THREE.MeshPhongMaterial({color:bodyColors[i]||0x1b2230,specular:0x4a6a88,shininess:70,emissive:new THREE.Color(accentHex),emissiveIntensity:0.0,transparent:true,opacity:0.78});
+      const body=new THREE.Mesh(bodyGeo,bodyMat);
+      const edgesMat=new THREE.LineBasicMaterial({color:0xece8dd,transparent:true,opacity:0.7});
+      const edges=new THREE.LineSegments(edgeGeo,edgesMat);
+      const tex=makeTex(L.type);
+      const faceMat=new THREE.MeshBasicMaterial({map:tex,transparent:true,opacity:1.0,side:THREE.DoubleSide,depthTest:false});
+      const face=new THREE.Mesh(faceGeo,faceMat); face.position.z=T/2+1.5; face.renderOrder=10;
+      const backTex=makeTex(L.type);
+      const backMat=new THREE.MeshBasicMaterial({map:backTex,transparent:true,opacity:0.6,side:THREE.DoubleSide,depthTest:false});
+      const backFace=new THREE.Mesh(backFaceGeo,backMat); backFace.position.z=-T/2-1.5; backFace.rotation.y=Math.PI; backFace.renderOrder=10;
+      grp.add(body); grp.add(edges); grp.add(face); grp.add(backFace);
+      group.add(grp);
+      layerObjs.push({grp,body,bodyMat,edgesMat,faceMat,backMat,face,backFace});
+    });
+
+    // connector pins (4 vertical lines)
+    pinGeo=new THREE.BufferGeometry();
+    pinGeo.setAttribute("position",new THREE.BufferAttribute(new Float32Array(8*3),3));
+    const pinMat=new THREE.LineBasicMaterial({color:new THREE.Color(accentHex),transparent:true,opacity:0});
+    pins=new THREE.LineSegments(pinGeo,pinMat); group.add(pins);
+
+    // ===== iPhone-style triple-camera module on the back (platform) layer =====
+    (function buildCamera(){
+      const cam=new THREE.Group();
+      const plateGeo=new THREE.ExtrudeGeometry(roundedShape(82,82,20),{depth:10,bevelEnabled:true,bevelThickness:1.2,bevelSize:1.2,bevelSegments:1,steps:1}); plateGeo.center();
+      const plateMat=new THREE.MeshPhongMaterial({color:0x10151d,specular:0x556677,shininess:80});
+      cam.add(new THREE.Mesh(plateGeo,plateMat));
+      const ringMat=new THREE.MeshPhongMaterial({color:0x05070a,specular:0x334455,shininess:90});
+      const glassMat=new THREE.MeshPhongMaterial({color:0x070b12,specular:0x88bbdd,shininess:120,emissive:new THREE.Color(0x12303a),emissiveIntensity:0.7});
+      [[-18,18],[18,18],[0,-19]].forEach(p=>{
+        const ring=new THREE.Mesh(new THREE.TorusGeometry(14,3.4,16,30),ringMat); ring.position.set(p[0],p[1],7); cam.add(ring);
+        const glass=new THREE.Mesh(new THREE.CircleGeometry(11,26),glassMat); glass.position.set(p[0],p[1],7.6); cam.add(glass);
+      });
+      const flash=new THREE.Mesh(new THREE.CircleGeometry(4.5,18),new THREE.MeshBasicMaterial({color:0xffe6c2})); flash.position.set(22,-19,7.6); cam.add(flash);
+      const lidar=new THREE.Mesh(new THREE.CircleGeometry(4,16),new THREE.MeshPhongMaterial({color:0x0a0d12,specular:0x223344,shininess:40})); lidar.position.set(-22,-19,7.6); cam.add(lidar);
+      cam.position.set(-W/2+60,H/2-64,-T/2-6); cam.rotation.y=Math.PI; // mount on the back face
+      layerObjs[N-1].grp.add(cam); layerObjs[N-1].cam=cam;
+    })();
+
+    ok=true;
+    resize();
+  }
+
+  function recolor(){
+    accentHex=cssVar("--accent")||"#ff6a1a";
+    if(!ok) return;
+    const c=new THREE.Color(accentHex);
+    layerObjs.forEach(o=>{ o.bodyMat.emissive.copy(c); });
+    pointLight.color.copy(c); pins.material.color.copy(c);
+    render();
+  }
+
+  function resize(){
+    glW=stage.clientWidth||innerWidth; glH=stage.clientHeight||innerHeight;
+    if(ok){ renderer.setPixelRatio(Math.min(devicePixelRatio,1.5)); renderer.setSize(glW,glH,false); camera.aspect=glW/glH; camera.updateProjectionMatrix(); }
+    fit=Math.min(0.78, glW/1240, glH/1180); fit=Math.max(0.42,fit);
+    if(ok) group.scale.setScalar(fit);
+  }
+
+  /* ---------- state ---------- */
+  let prog=0, progTarget=0, explodeP=0, activeIdx=0, lastActive=-1, rafAlive=false;
+  let dragX=0, dragY=0, autoY=0, curXdeg=-16, curYdeg=22;
+  let targetXdeg=-16, targetYdeg=22;
+  let dragging=false, lastPX=0, lastPY=0;
+
+  function zFor(i,p){ const mid=(N-1)/2; return lerp((mid-i)*4,(mid-i)*132,p); }
+
+  function apply3D(){
+    if(!ok) return;
+    group.rotation.x=curXdeg*DEG; group.rotation.y=curYdeg*DEG;
+    const mid=(N-1)/2;
+    layerObjs.forEach((o,i)=>{
+      o.grp.position.z=zFor(i,explodeP);
+      const on=(i===activeIdx && prog>0.12);
+      const exploded=prog>0.14;
+      o.edgesMat.color.set(on?accentHex:0xece8dd);
+      o.edgesMat.opacity=on?1.0:(exploded?0.55:0.7);
+      o.bodyMat.emissiveIntensity=on?0.4:0.02;
+      o.bodyMat.opacity=on?0.7:(exploded?0.35:0.5);
+      o.faceMat.opacity=on?1.0:(exploded?0.8:0.95);
+      o.backMat.opacity=on?0.7:(exploded?0.45:0.5);
+      const sc=on?1.0:(exploded?0.985:1.0); o.grp.scale.setScalar(sc);
+    });
+    const az=zFor(activeIdx,explodeP);
+    pointLight.position.set(0,0,az+60); pointLight.intensity=explodeP*2.6;
+    // pins
+    const fz=zFor(0,explodeP), bz=zFor(N-1,explodeP);
+    const cw=W/2-16, ch=H/2-16, pa=pinGeo.attributes.position.array;
+    const corners=[[-cw,-ch],[cw,-ch],[cw,ch],[-cw,ch]];
+    for(let k=0;k<4;k++){ const o=k*6; pa[o]=corners[k][0]; pa[o+1]=corners[k][1]; pa[o+2]=fz; pa[o+3]=corners[k][0]; pa[o+4]=corners[k][1]; pa[o+5]=bz; }
+    pinGeo.attributes.position.needsUpdate=true; pins.material.opacity=explodeP*0.4;
+  }
+
+  function render(){ if(ok) renderer.render(sceneT,camera); updateCallout(); }
+
+  function updateCallout(){
+    if(!ok) return;
+    const show=(prog>0.12 && prog<0.97);
+    lead3d.style.opacity=show?1:0; tag3d.style.opacity=show?1:0;
+    if(!show) return;
+    group.updateMatrixWorld();
+    const az=zFor(activeIdx,explodeP);
+    const edge=new THREE.Vector3(W/2+8,0,az); group.localToWorld(edge); edge.project(camera);
+    const lab=new THREE.Vector3(W/2+86,46,az); group.localToWorld(lab); lab.project(camera);
+    const ex=(edge.x*0.5+0.5)*glW, ey=(-edge.y*0.5+0.5)*glH;
+    const lx=(lab.x*0.5+0.5)*glW, ly=(-lab.y*0.5+0.5)*glH;
+    leadLine.setAttribute("x1",ex); leadLine.setAttribute("y1",ey);
+    leadLine.setAttribute("x2",lx); leadLine.setAttribute("y2",ly);
+    leadDot.setAttribute("cx",ex); leadDot.setAttribute("cy",ey);
+    tag3d.style.left=(lx+8)+"px"; tag3d.style.top=ly+"px";
+    const L=LAYERS[activeIdx]; tag3dId.textContent=L.id; tag3dNm.textContent=L.name;
+  }
+
+  /* ---------- scroll: only sets a TARGET (cheap) — the rAF loop eases + renders ---------- */
+  function onScroll(){
+    const r=teardown.getBoundingClientRect();
+    const total=teardown.offsetHeight-innerHeight;
+    progTarget=clamp(-r.top/total,0,1);
+    dmArrow.textContent = progTarget>0.5 ? "⟲" : "⟶";
+    dmBtn.firstChild.textContent = progTarget>0.5 ? "Assemble " : "Dismantle ";
+    if(!rafAlive){ // frozen context (screenshot tooling / no rAF) — snap + render directly
+      prog=progTarget; curXdeg=-16-smooth(0.10,0.82,prog)*6+dragX; curYdeg=22+prog*30+dragY+autoY;
+      updateUI(); apply3D(); render();
+    }
+  }
+
+  /* ---------- cheap per-frame DOM/state sync from eased prog ---------- */
+  function updateUI(){
+    explodeP=smooth(0.10,0.82,prog);
+    activeIdx=clamp(Math.floor(smooth(0.12,0.86,prog)*N),0,N-1);
+    ticks.forEach((t,i)=>t.classList.toggle("on", i===activeIdx && prog>0.12));
+    const heroOut=smooth(0.02,0.12,prog);
+    heroOv.style.opacity=(1-heroOut).toFixed(3); heroOv.style.transform="translateY("+(-heroOut*40)+"px)";
+    cue.style.opacity=(1-smooth(0.0,0.06,prog)).toFixed(3);
+    const showHud=(prog>0.12 && prog<0.97)?1:0; hud.style.opacity=showHud; readout.style.opacity=showHud;
+    if(activeIdx!==lastActive){
+      lastActive=activeIdx;
+      const L=LAYERS[activeIdx];
+      hudId.textContent=L.id; hudName.textContent=L.name; hudSub.textContent="Layer "+(N-activeIdx)+" / "+N+" · "+L.sub;
+      roDesc.textContent=L.desc;
+      roSpecs.innerHTML='<div class="hwrow">'+L.hw+'</div>'+L.specs.map(s=>"<div>"+s+"</div>").join("");
+    }
+  }
+
+  /* ---------- drag ---------- */
+  function pt(e){ return e.touches?{x:e.touches[0].clientX,y:e.touches[0].clientY}:{x:e.clientX,y:e.clientY}; }
+  function down(e){ dragging=true; scene2d.classList.add("grabbing"); const p=pt(e); lastPX=p.x; lastPY=p.y; }
+  function move(e){ if(!dragging) return; const p=pt(e); dragY+=(p.x-lastPX)*0.35; dragX-=(p.y-lastPY)*0.28; dragX=clamp(dragX,-55,55); lastPX=p.x; lastPY=p.y; if(e.cancelable) e.preventDefault(); }
+  function up(){ dragging=false; scene2d.classList.remove("grabbing"); }
+  scene2d.addEventListener("mousedown",down); addEventListener("mousemove",move); addEventListener("mouseup",up);
+  scene2d.addEventListener("touchstart",down,{passive:true}); addEventListener("touchmove",move,{passive:false}); addEventListener("touchend",up);
+
+  dmBtn.addEventListener("click",()=>{ const top=teardown.offsetTop, total=teardown.offsetHeight-innerHeight; const go=prog<=0.5; scrollTo({top:top+total*(go?0.74:0.0),behavior:"smooth"}); });
+
+  /* ---------- rAF: single render per frame; eases prog (dismantle) + rotation ---------- */
+  function loop(){
+    rafAlive=true;
+    requestAnimationFrame(loop);
+    // skip all GPU work when the teardown stage is scrolled out of view
+    const r=teardown.getBoundingClientRect();
+    if(r.bottom<=0 || r.top>=innerHeight) return;
+    if(!dragging && !reduce) autoY+=0.045;
+    // ease scroll progress → buttery dismantle, independent of wheel cadence
+    prog += (progTarget-prog)*0.16;
+    if(Math.abs(progTarget-prog)<0.0005) prog=progTarget;
+    targetXdeg=-16 - smooth(0.10,0.82,prog)*6 + dragX;
+    targetYdeg=22 + prog*30 + dragY;
+    curXdeg += (targetXdeg-curXdeg)*0.16;
+    curYdeg += ((targetYdeg+autoY)-curYdeg)*0.16;
+    updateUI();
+    apply3D(); render();
+  }
+
+  /* ---------- the rest ---------- */
+  function initReveal(){
+    if(reduce) return;
+    const root=document.documentElement; root.classList.add("anim");
+    const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}})},{threshold:.14});
+    document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+    let alive=false; requestAnimationFrame(()=>alive=true); setTimeout(()=>{if(!alive)root.classList.remove("anim");},450);
+  }
+  function initRecord(){
+    const axis=document.querySelector("#recAxis .fill"); const stations=[...document.querySelectorAll(".station")];
+    if(!axis) return;
+    const upd=()=>{ const rec=document.querySelector(".record").getBoundingClientRect(); const p=clamp((innerHeight*0.5-rec.top)/rec.height,0,1); axis.style.height=(p*100)+"%"; stations.forEach(s=>s.classList.toggle("on",s.getBoundingClientRect().top<innerHeight*0.6)); };
+    addEventListener("scroll",upd,{passive:true}); upd();
+  }
+  function initMagnetic(){
+    if(reduce||matchMedia("(max-width:860px)").matches) return;
+    document.querySelectorAll("[data-magnetic]").forEach(el=>{
+      el.addEventListener("mousemove",e=>{const r=el.getBoundingClientRect();el.style.transform="translate("+((e.clientX-r.left-r.width/2)*0.3)+"px,"+((e.clientY-r.top-r.height/2)*0.3)+"px)";});
+      el.addEventListener("mouseleave",()=>el.style.transform="");
+    });
+  }
+  function initCross(){
+    if(matchMedia("(max-width:860px)").matches) return;
+    const c=document.querySelector(".cross"), hx=c.querySelector(".hx"), vx=c.querySelector(".vx"), co=c.querySelector(".coord");
+    addEventListener("mousemove",e=>{ c.style.opacity=1; hx.style.top=e.clientY+"px"; vx.style.left=e.clientX+"px"; co.style.left=e.clientX+"px"; co.style.top=e.clientY+"px"; co.textContent=String(Math.round(e.clientX)).padStart(4,"0")+","+String(Math.round(e.clientY)).padStart(4,"0"); });
+    addEventListener("mouseleave",()=>c.style.opacity=0);
+  }
+  function initTheme(){
+    const root=document.documentElement; const saved=localStorage.getItem("ar-medium")||"blackprint"; root.setAttribute("data-theme",saved);
+    const btns=document.querySelectorAll(".tswitch button");
+    const sync=()=>btns.forEach(b=>b.classList.toggle("on",b.dataset.theme===root.getAttribute("data-theme")));
+    btns.forEach(b=>b.addEventListener("click",()=>{ root.setAttribute("data-theme",b.dataset.theme); localStorage.setItem("ar-medium",b.dataset.theme); sync(); setTimeout(recolor,30); }));
+    sync();
+  }
+
+  function boot(){
+    initTheme(); initGL(); resize(); onScroll();
+    addEventListener("scroll",onScroll,{passive:true});
+    addEventListener("resize",()=>{ resize(); onScroll(); });
+    initReveal(); initRecord(); initMagnetic(); initCross();
+    if(reduce){ progTarget=0.5; prog=0.5; curXdeg=-19; curYdeg=30; updateUI(); apply3D(); render(); }
+    else if(ok){ requestAnimationFrame(loop); }
+  }
+  if(document.readyState==="loading") addEventListener("DOMContentLoaded",boot); else boot();
+})();
+</script>
 </body>
 </html>
