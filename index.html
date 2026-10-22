@@ -1,864 +1,784 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="blackprint">
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ahmed Reda — Flutter Engineering · Teardown</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ahmed Elgharbawy, Senior Flutter Developer</title>
+<meta name="description" content="Senior Flutter developer in Cairo. 5+ years, 10 live apps on Google Play and the App Store: health platforms, offline-first POS, ZATCA e-invoicing, Arabic/English RTL.">
+<meta property="og:title" content="Ahmed Elgharbawy, Senior Flutter Developer">
+<meta property="og:description" content="5+ years building Flutter apps. 10 live on Google Play and the App Store.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ahmedredagh.github.io/portfolio/">
+<meta property="og:image" content="https://ahmedredagh.github.io/portfolio/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#07060B">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+  // Only show the loader when JS runs and motion is welcome; otherwise the page shows at once.
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('motion');
+</script>
 <style>
-/* =====================================================================
-   AHMED REDA — TEARDOWN  ·  WebGL exploded view (Three.js) · blackprint
-   ===================================================================== */
-html[data-theme="blackprint"]{
-  --bg:#0a0b0e; --bg2:#101216; --panel:#0e1014;
-  --ink:#ece8dd; --ink-dim:#7d8290; --ink-faint:#454b57;
-  --grid:rgba(236,232,221,.05); --grid-strong:rgba(236,232,221,.10);
-  --line:#2a2f39;
-  --accent:#ff6a1a; --accent2:#36e0cf; --accent3:#c6ff3a;
-  --glow:rgba(255,106,26,.55);
+:root {
+  --bg: #07060B;
+  --panel: #100E19;
+  --text: #ECE9F5;
+  --muted: #9C96B0;
+  --line: rgba(255, 255, 255, .1);
+  --violet: #8B5CF6;
+  --pink: #E879F9;
+  --blue: #60A5FA;
+  --grad: linear-gradient(100deg, #60A5FA, #8B5CF6 45%, #E879F9);
+  --font: "Geist", system-ui, sans-serif;
 }
-html[data-theme="draft"]{
-  --bg:#e9e2d0; --bg2:#e2dac6; --panel:#efe9da;
-  --ink:#211d15; --ink-dim:#6c6552; --ink-faint:#b3a988;
-  --grid:rgba(33,29,21,.06); --grid-strong:rgba(33,29,21,.12);
-  --line:#c3b896;
-  --accent:#c8431a; --accent2:#1c7d72; --accent3:#6f7a17;
-  --glow:rgba(200,67,26,.4);
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 400 17px/1.6 var(--font); -webkit-font-smoothing: antialiased; overflow-x: hidden;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{ -webkit-font-smoothing:antialiased; scroll-behavior:smooth; }
-body{
-  background:var(--bg); color:var(--ink);
-  font-family:"Archivo",system-ui,sans-serif; line-height:1.5; overflow-x:hidden;
-  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
-  background-size:38px 38px; transition:background-color .5s,color .5s;
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--pink); outline-offset: 4px; border-radius: 6px; }
+h1, h2, h3, p { margin: 0; }
+ul { margin: 0; padding: 0; list-style: none; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 32px; }
+.skip { position: absolute; left: -999px; }
+.skip:focus { left: 16px; top: 16px; background: #fff; color: #000; padding: 8px 12px; z-index: 100; }
+.grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+/* ---------- loader ---------- */
+#loader { display: none; }
+.motion #loader {
+  position: fixed; inset: 0; z-index: 90; background: #E9E4EC; color: #0B0A10;
+  display: grid; place-items: center; overflow: hidden;
 }
-::selection{ background:var(--accent); color:var(--bg); }
-a{ color:inherit; text-decoration:none; }
-.mono{ font-family:"Space Mono",monospace; }
-h1,h2,h3,h4{ font-weight:800; line-height:.98; letter-spacing:-.02em; }
-.tlabel{ font-family:"Space Mono",monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-dim); }
+.marquee { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); white-space: nowrap; }
+.mq-track { display: inline-flex; gap: 56px; align-items: center; animation: mq 16s linear infinite; }
+.mq-track span { font-size: clamp(48px, 7vw, 96px); font-weight: 800; letter-spacing: -.02em; }
+.mq-track b { width: 22px; height: 22px; border-radius: 50%; background: #0B0A10; display: block; }
+@keyframes mq { to { transform: translateX(-50%); } }
+.pill {
+  position: relative; z-index: 1; display: flex; gap: 26px; align-items: center;
+  padding: 24px 46px; border-radius: 60px; background: #050407; color: #fff;
+  font-weight: 600; font-size: 17px; letter-spacing: .02em;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, .25), inset 0 0 0 2px rgba(139, 92, 246, .55);
+}
+.pill #pct { color: #8E87A3; font-variant-numeric: tabular-nums; min-width: 3.2ch; }
 
-/* ---------- FIXED CHROME ---------- */
-.chrome{ position:fixed; inset:0; z-index:60; pointer-events:none; }
-.chrome .frame{ position:absolute; inset:16px; border:1px solid var(--line); }
-.corner{ position:absolute; width:26px; height:26px; color:var(--accent); }
-.corner::before,.corner::after{ content:""; position:absolute; background:currentColor; }
-.corner::before{ width:100%; height:1.5px; top:50%; } .corner::after{ height:100%; width:1.5px; left:50%; }
-.corner.tl{ top:8px; left:8px; } .corner.tr{ top:8px; right:8px; } .corner.bl{ bottom:8px; left:8px; } .corner.br{ bottom:8px; right:8px; }
-.ruler{ position:absolute; color:var(--ink-faint); }
-.ruler.top{ top:16px; left:16px; right:16px; height:14px; border-bottom:1px solid var(--line); background-image:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 38px); }
-.ruler.left{ left:16px; top:16px; bottom:16px; width:14px; border-right:1px solid var(--line); background-image:repeating-linear-gradient(0deg,var(--line) 0 1px,transparent 1px 38px); }
-.scan{ position:fixed; inset:0; z-index:61; pointer-events:none; opacity:.5; background:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px); mix-blend-mode:overlay; }
-html[data-theme="draft"] .scan{ display:none; }
-.cross{ position:fixed; z-index:62; pointer-events:none; inset:0; opacity:0; transition:opacity .3s; }
-.cross .hx,.cross .vx{ position:absolute; background:var(--accent); opacity:.45; }
-.cross .hx{ left:0; right:0; height:1px; } .cross .vx{ top:0; bottom:0; width:1px; }
-.cross .coord{ position:absolute; font-family:"Space Mono",monospace; font-size:10px; letter-spacing:.1em; color:var(--accent); background:var(--bg); padding:2px 5px; border:1px solid var(--line); transform:translate(12px,12px); }
-@media (max-width:860px){ .cross{ display:none; } }
+/* ---------- custom cursor (mouse only) ---------- */
+.cursor { display: none; }
+@media (pointer: fine) {
+  .cursor {
+    display: block; position: fixed; left: 0; top: 0; z-index: 80; pointer-events: none;
+    width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%;
+    background: #fff; mix-blend-mode: difference; transition: width .25s, height .25s, margin .25s;
+  }
+  .cursor.big { width: 54px; height: 54px; margin: -27px 0 0 -27px; }
+}
 
-/* ---------- NAV ---------- */
-.nav{ position:fixed; top:0; left:0; width:100%; z-index:70; display:flex; justify-content:space-between; align-items:center; padding:26px clamp(28px,4vw,60px); pointer-events:none; }
-.nav>*{ pointer-events:auto; }
-.nav .brand{ font-family:"Space Mono",monospace; font-size:13px; letter-spacing:.14em; text-transform:uppercase; display:flex; gap:10px; align-items:center; }
-.nav .brand b{ color:var(--accent); } .nav .brand .vr{ width:1px; height:14px; background:var(--line); }
-.nav .right{ display:flex; gap:22px; align-items:center; }
-.nav .right a{ font-family:"Space Mono",monospace; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-dim); transition:color .2s; }
-.nav .right a:hover{ color:var(--accent); }
-@media (max-width:860px){ .nav .right .lnk{ display:none; } }
-.tswitch{ display:flex; gap:6px; align-items:center; border:1px solid var(--line); padding:5px; }
-.tswitch button{ width:16px; height:16px; border:1px solid var(--line); cursor:pointer; background:transparent; }
-.tswitch button.b{ background:#0a0b0e; } .tswitch button.d{ background:#c8431a; }
-.tswitch button.on{ outline:2px solid var(--accent); outline-offset:1px; }
+/* ---------- glows ---------- */
+.glow { position: absolute; border-radius: 50%; pointer-events: none; filter: blur(10px); z-index: 0; }
+.glow.g1 { width: 720px; height: 720px; left: 50%; top: 52%; transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(139, 92, 246, .38), transparent 62%); }
+.glow.g2 { width: 520px; height: 520px; right: -220px; top: -160px;
+  background: radial-gradient(circle, rgba(232, 121, 249, .22), transparent 65%); }
+.glow.g3 { width: 520px; height: 520px; left: -240px; bottom: -200px;
+  background: radial-gradient(circle, rgba(96, 165, 250, .2), transparent 65%); }
 
-/* ---------- TEARDOWN STAGE ---------- */
-.teardown{ position:relative; height:440vh; }
-.stage{ position:sticky; top:0; height:100vh; overflow:hidden; }
-.scene{ position:absolute; inset:0; cursor:grab; touch-action:pan-y; }
-.scene.grabbing{ cursor:grabbing; }
-.scene::after{ content:""; position:absolute; inset:0; pointer-events:none; background:radial-gradient(60% 55% at 58% 48%, transparent 55%, color-mix(in srgb,var(--bg) 72%,transparent) 100%); }
-#gl{ display:block; width:100%; height:100%; }
+/* ---------- nav ---------- */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  display: flex; justify-content: space-between; align-items: center; padding: 22px 32px;
+  transition: background .3s, backdrop-filter .3s;
+}
+.nav.solid { background: rgba(7, 6, 11, .72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.nav .brand { font-weight: 700; font-size: 18px; text-decoration: none; letter-spacing: -.01em; }
+.nav .mail { color: var(--muted); text-decoration: none; font-size: 15px; }
+.nav .mail:hover { color: #fff; }
+.nav nav { display: flex; gap: 28px; font-size: 14px; font-weight: 600; letter-spacing: .08em; }
+.nav nav a { text-decoration: none; color: var(--muted); }
+.nav nav a:hover { color: #fff; }
 
-/* projected 3D callout */
-.lead3d{ position:absolute; inset:0; z-index:5; pointer-events:none; overflow:visible; opacity:0; transition:opacity .35s; }
-.lead3d line{ stroke:var(--accent); stroke-width:1; }
-.lead3d circle{ fill:var(--accent); }
-.tag3d{ position:absolute; z-index:6; pointer-events:none; transform:translate(0,-50%); opacity:0; transition:opacity .35s; white-space:nowrap; }
-.tag3d .id{ font-family:"Space Mono",monospace; font-size:13px; font-weight:700; color:var(--accent); letter-spacing:.1em; }
-.tag3d .nm{ font-family:"Space Mono",monospace; font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-dim); }
+/* ---------- hero ---------- */
+.hero { position: relative; min-height: 100vh; min-height: 100svh; overflow: hidden; display: grid; align-items: center; }
+.hero-grid {
+  position: relative; z-index: 1; width: 100%;
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 40px; align-items: center; padding-top: 90px; padding-bottom: 60px;
+}
+.hello { color: var(--violet); font-size: 22px; font-weight: 500; margin-bottom: 8px; }
+.name { font-size: clamp(42px, 5.2vw, 78px); font-weight: 800; line-height: .98; letter-spacing: -.03em; text-transform: uppercase; }
+.name .line { display: block; overflow: hidden; padding-bottom: .05em; }
+.name .w { display: inline-block; }
+.hero-sub { margin-top: 22px; color: var(--muted); max-width: 26em; font-size: 16px; }
+.hero-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px; border-radius: 40px;
+  font-weight: 600; font-size: 15px; text-decoration: none; transition: transform .2s, box-shadow .25s, background .25s;
+}
+.btn.fill { background: #fff; color: #0B0A10; }
+.btn.fill:hover { box-shadow: 0 10px 34px -6px rgba(139, 92, 246, .8); transform: translateY(-2px); }
+.btn.ghost { border: 1.5px solid rgba(255, 255, 255, .28); }
+.btn.ghost:hover { background: rgba(255, 255, 255, .07); }
+.role { text-align: right; }
+.role .a { color: var(--muted); font-size: 20px; }
+.role .rot { display: block; overflow: hidden; height: 1.02em; font-size: clamp(40px, 4.8vw, 74px); font-weight: 800; line-height: 1.02; letter-spacing: -.03em; }
+.role .rot span { display: block; }
+.role .r1 span { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.role .r2 span { color: transparent; -webkit-text-stroke: 1.5px rgba(236, 233, 245, .75); }
+.scroll-hint { position: absolute; left: 50%; bottom: 22px; z-index: 1; transform: translateX(-50%); color: var(--muted); font-size: 13px; letter-spacing: .14em; }
 
-/* hero overlay */
-.hero-ov{ position:absolute; inset:0; z-index:7; pointer-events:none; display:flex; flex-direction:column; justify-content:center; padding:0 clamp(28px,5vw,90px); will-change:opacity,transform; }
-.hero-ov .fig{ display:flex; gap:14px; align-items:center; margin-bottom:18px; }
-.hero-ov .fig .dot{ width:8px; height:8px; background:var(--accent); border-radius:50%; animation:pulse 1.5s infinite; }
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
-.hero-ov h1{ font-size:clamp(58px,12vw,190px); text-transform:uppercase; letter-spacing:-.04em; line-height:.86; }
-.hero-ov h1 .o{ -webkit-text-stroke:1.5px var(--ink); color:transparent; }
-.hero-ov .sub{ margin-top:22px; max-width:30ch; color:var(--ink-dim); font-size:clamp(14px,1.3vw,18px); }
-.hero-ov .sub b{ color:var(--ink); font-weight:600; }
+/* ---------- phone ---------- */
+.device { position: relative; perspective: 1400px; }
+.phone {
+  position: relative; width: 300px; aspect-ratio: 300 / 615; border-radius: 50px; padding: 11px;
+  background: linear-gradient(145deg, #2B2840, #0B0912 45%, #221E33);
+  box-shadow: 0 60px 90px -30px rgba(139, 92, 246, .55), 0 0 0 1.5px #3E3958 inset, 0 0 0 4px #0B0912 inset;
+  transform: rotateY(var(--ry, -10deg)) rotateX(var(--rx, 5deg));
+  transition: transform .6s cubic-bezier(.2, .8, .2, 1);
+}
+.phone::before, .phone::after { content: ""; position: absolute; width: 4px; border-radius: 2px; background: #2B2840; }
+.phone::before { left: -4px; top: 118px; height: 58px; box-shadow: 0 74px 0 #2B2840; }
+.phone::after { right: -4px; top: 150px; height: 86px; }
+.screen { height: 100%; border-radius: 40px; overflow: hidden; position: relative; background: #0D0A1C; display: flex; flex-direction: column; isolation: isolate; }
+.screen::after { content: ""; position: absolute; inset: 0; z-index: 6; pointer-events: none; background: linear-gradient(120deg, rgba(255, 255, 255, .13), rgba(255, 255, 255, 0) 32%); }
+.wall { position: absolute; inset: 0; z-index: -1; }
+.wall i { position: absolute; width: 340px; height: 340px; border-radius: 50%; background: radial-gradient(circle, var(--c), transparent 66%); opacity: .9; }
+.wall i:nth-child(1) { --c: #5B6CFF; left: -150px; top: -120px; }
+.wall i:nth-child(2) { --c: #A855F7; right: -170px; top: 140px; }
+.wall i:nth-child(3) { --c: #EC4899; right: -120px; bottom: -170px; opacity: .65; }
+.wall i:nth-child(4) { --c: #22D3EE; left: -140px; bottom: -160px; opacity: .55; }
+.motion .wall i { animation: breathe 11s ease-in-out infinite alternate; }
+.motion .wall i:nth-child(2) { animation-duration: 14s; animation-delay: -4s; }
+.motion .wall i:nth-child(3) { animation-duration: 9s; animation-delay: -2s; }
+.motion .wall i:nth-child(4) { animation-duration: 16s; animation-delay: -7s; }
+@keyframes breathe { 0% { transform: translate(0, 0) scale(.92); } 50% { transform: translate(30px, -20px) scale(1.14); } 100% { transform: translate(-24px, 18px) scale(1); } }
+.status { display: flex; justify-content: space-between; align-items: center; padding: 15px 26px 0; color: #fff; font-size: 14px; font-weight: 600; position: relative; z-index: 4; }
+.island { width: 94px; height: 27px; border-radius: 20px; background: #000; }
+.bars { display: flex; gap: 2px; align-items: flex-end; }
+.bars i { width: 3px; background: #fff; border-radius: 1px; display: block; }
+.notif {
+  position: absolute; left: 10px; right: 10px; top: 52px; z-index: 5;
+  display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 20px;
+  background: rgba(246, 245, 252, .94); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .35); transform: translateY(-140%); opacity: 0;
+  transition: transform .55s cubic-bezier(.2, .9, .25, 1.15), opacity .35s ease;
+}
+.notif.show { transform: none; opacity: 1; }
+.notif img { width: 34px; height: 34px; border-radius: 9px; }
+.notif b { display: block; font-size: 12.5px; color: #111; line-height: 1.25; }
+.notif span { display: block; font-size: 12.5px; color: #3F3F46; line-height: 1.3; }
+.notif time { align-self: start; font-size: 11px; color: #71717A; }
+.apps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px 10px; padding: 92px 20px 0; }
+.apps a, .dock a { display: flex; flex-direction: column; align-items: center; gap: 7px; text-decoration: none; }
+.apps img, .dock img { width: 62px; height: 62px; border-radius: 15px; display: block; box-shadow: 0 6px 14px rgba(0, 0, 0, .35); transition: transform .2s cubic-bezier(.2, .9, .3, 1.3); }
+.apps a:hover img, .dock a:hover img { transform: translateY(-3px) scale(1.07); }
+.apps span { color: #fff; font-size: 11.5px; line-height: 1.2; text-align: center; max-width: 76px; text-shadow: 0 1px 3px rgba(0, 0, 0, .5); }
+.pager { display: flex; justify-content: center; gap: 7px; margin: auto 0 12px; }
+.pager i { width: 7px; height: 7px; border-radius: 50%; background: rgba(255, 255, 255, .45); }
+.pager i:first-child { background: #fff; }
+.dock { display: flex; justify-content: space-around; margin: 0 12px 10px; padding: 12px 8px; border-radius: 30px; background: rgba(255, 255, 255, .16); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.dock span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.home-bar { width: 122px; height: 5px; border-radius: 3px; background: rgba(255, 255, 255, .9); margin: 0 auto 9px; }
+.launch { position: absolute; inset: 0; z-index: 5; display: grid; place-content: center; justify-items: center; gap: 14px; background: #0D0A1C; color: #fff; font-weight: 600; font-size: 15px; opacity: 0; transform: scale(.25); pointer-events: none; transition: transform .45s cubic-bezier(.2, .8, .2, 1), opacity .25s ease; }
+.launch img { width: 92px; height: 92px; border-radius: 22px; }
+.launch.on { opacity: 1; transform: none; }
 
-/* HUD */
-.hud{ position:absolute; top:clamp(86px,12vh,120px); left:clamp(28px,5vw,64px); z-index:6; opacity:0; transition:opacity .4s; }
-.hud .big{ font-size:clamp(40px,7vw,96px); color:var(--accent); line-height:.9; letter-spacing:-.02em; }
-.hud .nm{ font-size:clamp(15px,1.6vw,22px); text-transform:uppercase; letter-spacing:.04em; margin-top:6px; }
-.hud .sub{ font-family:"Space Mono",monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-dim); margin-top:8px; }
+/* ---------- sections ---------- */
+section { position: relative; padding: 130px 0; }
+.kicker { color: var(--violet); font-weight: 600; font-size: 15px; letter-spacing: .12em; margin-bottom: 18px; }
+.big { font-size: clamp(44px, 7vw, 104px); font-weight: 800; line-height: .95; letter-spacing: -.035em; text-transform: uppercase; }
+.big .out { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
-/* readout */
-.readout{ position:absolute; left:clamp(28px,5vw,64px); bottom:clamp(28px,5vh,54px); z-index:6; width:min(360px,42vw); opacity:0; transition:opacity .4s; }
-.readout .desc{ font-size:clamp(14px,1.25vw,17px); color:var(--ink); margin-bottom:16px; text-wrap:pretty; }
-.readout .specs{ display:grid; gap:7px; }
-.readout .specs div{ display:flex; gap:10px; align-items:baseline; font-family:"Space Mono",monospace; font-size:12px; color:var(--ink-dim); }
-.readout .specs div::before{ content:"+"; color:var(--accent); }
-.readout .specs .hwrow{ color:var(--accent); border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line)); background:color-mix(in srgb,var(--accent) 7%,transparent); padding:9px 12px; margin-bottom:6px; letter-spacing:.02em; font-weight:700; }
-.readout .specs .hwrow::before{ content:"▣"; }
-@media (max-width:860px){ .readout{ width:min(86vw,420px); } }
+/* about: words light up as you scroll */
+.about p { font-size: clamp(28px, 3.6vw, 50px); font-weight: 600; line-height: 1.22; letter-spacing: -.02em; max-width: 22em; }
+.about p .wd { color: rgba(236, 233, 245, .18); transition: color .2s; }
+.about p .wd.on { color: var(--text); }
+.no-motion-about .about p .wd, html:not(.motion) .about p .wd { color: var(--text); }
 
-/* controls */
-.controls{ position:absolute; right:clamp(28px,5vw,64px); bottom:clamp(28px,5vh,54px); z-index:7; display:flex; flex-direction:column; align-items:flex-end; gap:14px; }
-.dismantle{ pointer-events:auto; cursor:pointer; background:transparent; border:1px solid var(--accent); color:var(--accent); font-family:"Space Mono",monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; padding:13px 20px; display:flex; gap:12px; align-items:center; transition:background .2s,color .2s; }
-.dismantle:hover{ background:var(--accent); color:var(--bg); }
-.hint{ font-family:"Space Mono",monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-dim); display:flex; align-items:center; gap:9px; }
-.hint .ico{ width:30px; height:18px; border:1px solid var(--line); border-radius:9px; position:relative; }
-.hint .ico::after{ content:""; position:absolute; top:50%; left:50%; width:5px; height:5px; border-radius:50%; background:var(--accent); transform:translate(-50%,-50%); animation:drag 2s infinite; }
-@keyframes drag{0%,100%{transform:translate(-150%,-50%)}50%{transform:translate(50%,-50%)}}
+/* what I do */
+.what-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 60px; }
+.what {
+  position: relative; padding: 36px; border-radius: 26px; background: var(--panel); border: 1px solid var(--line);
+  overflow: hidden; transition: border-color .35s, transform .35s;
+}
+.what::before {
+  content: ""; position: absolute; inset: -1px; border-radius: 26px; padding: 1px; opacity: 0; transition: opacity .35s;
+  background: var(--grad); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
+}
+.what:hover { transform: translateY(-4px); }
+.what:hover::before { opacity: 1; }
+.what .shine { position: absolute; width: 380px; height: 380px; border-radius: 50%; right: -160px; top: -160px; background: radial-gradient(circle, rgba(139, 92, 246, .3), transparent 65%); transition: transform .6s; }
+.what:hover .shine { transform: scale(1.4); }
+.what h3 { position: relative; font-size: clamp(30px, 3vw, 42px); font-weight: 800; letter-spacing: -.03em; text-transform: uppercase; }
+.what .sub { position: relative; color: var(--violet); font-weight: 600; margin-top: 4px; }
+.what p { position: relative; color: var(--muted); margin-top: 18px; max-width: 30em; }
+.tags { position: relative; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.tags li { padding: 6px 13px; border-radius: 30px; font-size: 13.5px; border: 1px solid var(--line); color: #D8D3E8; background: rgba(255, 255, 255, .03); }
 
-/* rail */
-.rail{ position:absolute; right:clamp(20px,3vw,40px); top:50%; transform:translateY(-50%); z-index:6; display:flex; flex-direction:column; gap:14px; align-items:center; }
-.rail .t{ width:8px; height:8px; border:1px solid var(--ink-faint); border-radius:50%; position:relative; }
-.rail .t.on{ background:var(--accent); border-color:var(--accent); box-shadow:0 0 10px var(--glow); }
-.rail .t span{ position:absolute; right:16px; top:50%; transform:translateY(-50%); font-family:"Space Mono",monospace; font-size:10px; letter-spacing:.1em; color:var(--ink-dim); white-space:nowrap; opacity:0; transition:opacity .25s; }
-.rail .t.on span{ opacity:1; color:var(--accent); }
-@media (max-width:680px){ .rail{ display:none; } .controls .hint{ display:none; } }
+/* career */
+.career-list { position: relative; margin-top: 70px; }
+.career-rail { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--line); }
+.career-rail i { position: absolute; inset: 0; transform-origin: top; background: linear-gradient(#60A5FA, #8B5CF6 50%, #E879F9); box-shadow: 0 0 18px rgba(139, 92, 246, .8); }
+.career-item { display: grid; grid-template-columns: 1fr 1fr; gap: 90px; padding: 34px 0; position: relative; }
+.career-item::after { content: ""; position: absolute; left: 50%; top: 44px; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: var(--bg); border: 2px solid #4B4566; transition: all .35s; }
+.career-item.lit::after { background: var(--pink); border-color: var(--pink); box-shadow: 0 0 0 6px rgba(232, 121, 249, .18), 0 0 20px var(--pink); }
+.career-item .left { display: flex; justify-content: space-between; gap: 20px; }
+.career-item h3 { font-size: clamp(24px, 2.4vw, 32px); font-weight: 700; letter-spacing: -.02em; line-height: 1.15; }
+.career-item .co { color: var(--violet); font-weight: 600; margin-top: 4px; }
+.career-item .yr { font-size: clamp(34px, 3.4vw, 50px); font-weight: 800; letter-spacing: -.03em; color: transparent; -webkit-text-stroke: 1.2px rgba(236, 233, 245, .55); white-space: nowrap; line-height: 1; }
+.career-item.lit .yr { -webkit-text-stroke: 0; background: var(--grad); -webkit-background-clip: text; background-clip: text; }
+.career-item ul li { color: var(--muted); position: relative; padding-left: 18px; margin-bottom: 8px; }
+.career-item ul li::before { content: ""; position: absolute; left: 0; top: .7em; width: 6px; height: 6px; border-radius: 50%; background: var(--violet); }
 
-.cue{ position:absolute; left:50%; bottom:30px; transform:translateX(-50%); z-index:6; font-family:"Space Mono",monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-dim); display:flex; flex-direction:column; align-items:center; gap:8px; }
-.cue .ln{ width:1px; height:34px; background:linear-gradient(var(--accent),transparent); }
+/* work: horizontal track */
+.work { padding-bottom: 0; }
+.work-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; flex-wrap: wrap; }
+.work-head p { color: var(--muted); max-width: 24em; }
+.track-wrap { overflow: hidden; padding: 60px 0 130px; }
+.track { display: flex; gap: 22px; padding: 0 32px; width: max-content; }
+.card {
+  position: relative; width: 380px; flex: none; padding: 30px; border-radius: 26px; background: var(--panel); border: 1px solid var(--line);
+  display: flex; flex-direction: column; min-height: 440px; overflow: hidden;
+}
+.card .num { position: absolute; right: 26px; top: 20px; font-size: 64px; font-weight: 800; color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .14); letter-spacing: -.04em; }
+.card .ico { width: 84px; height: 84px; border-radius: 20px; box-shadow: 0 16px 34px -10px rgba(139, 92, 246, .7); }
+.card .ico.ph { display: grid; place-items: center; background: var(--grad); font-weight: 800; font-size: 30px; color: #fff; }
+.card h3 { font-size: 28px; font-weight: 700; letter-spacing: -.02em; margin-top: 26px; }
+.card .cat { color: var(--violet); font-weight: 600; font-size: 15px; margin-top: 2px; }
+.card p { color: var(--muted); margin-top: 14px; font-size: 15.5px; }
+.card .tools { margin-top: 16px; font-size: 13.5px; color: #C9C3DA; }
+.card .links { margin-top: auto; padding-top: 22px; display: flex; gap: 10px; flex-wrap: wrap; }
+.card .links a, .card .links span { padding: 8px 15px; border-radius: 30px; font-size: 13.5px; font-weight: 600; text-decoration: none; border: 1px solid rgba(255, 255, 255, .2); }
+.card .links a:hover { background: #fff; color: #0B0A10; }
+.card .links span { color: #F5C26B; border-color: rgba(245, 194, 107, .4); }
+.card::after { content: ""; position: absolute; inset: auto -30% -60% auto; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(232, 121, 249, .16), transparent 65%); pointer-events: none; }
 
-/* ---------- CONTENT ---------- */
-.wrap{ width:min(1280px,90vw); margin:0 auto; position:relative; z-index:2; }
-.sec-tag{ display:flex; align-items:center; gap:16px; margin-bottom:38px; }
-.sec-tag .fig{ font-family:"Space Mono",monospace; font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); }
-.sec-tag .rule{ flex:1; height:1px; background:var(--line); }
-.sec-tag h2{ font-size:clamp(30px,5vw,68px); text-transform:uppercase; }
-.section{ padding:clamp(90px,13vh,170px) 0; border-top:1px solid var(--line); }
+/* open source */
+.oss-card { margin-top: 50px; padding: 44px; border-radius: 30px; background: linear-gradient(135deg, rgba(96, 165, 250, .1), rgba(139, 92, 246, .12) 50%, rgba(232, 121, 249, .1)); border: 1px solid var(--line); display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; align-items: center; }
+.oss-card h3 { font-size: clamp(32px, 3.4vw, 48px); font-weight: 800; letter-spacing: -.03em; }
+.oss-card p { color: var(--muted); margin-top: 14px; max-width: 34em; }
+.oss-card pre { margin: 0; padding: 22px; border-radius: 18px; background: #0A0912; border: 1px solid var(--line); font: 13.5px/1.7 ui-monospace, Menlo, Consolas, monospace; color: #C9C3DA; overflow-x: auto; }
+.oss-card pre .k { color: #C084FC; } .oss-card pre .s { color: #86EFAC; } .oss-card pre .c { color: #6B6582; }
 
-.units{ display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line); border:1px solid var(--line); }
-@media (max-width:820px){ .units{ grid-template-columns:1fr; } }
-.unit{ background:var(--bg); padding:clamp(26px,3vw,40px); position:relative; transition:background .3s; }
-.unit:hover{ background:var(--bg2); }
-.unit .top{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:26px; }
-.unit .pno{ font-family:"Space Mono",monospace; font-size:12px; letter-spacing:.14em; color:var(--ink-dim); }
-.unit .status{ font-family:"Space Mono",monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent3); border:1px solid currentColor; padding:4px 9px; }
-.unit h3{ font-size:clamp(26px,3vw,40px); text-transform:uppercase; margin-bottom:14px; }
-.unit:hover h3{ color:var(--accent); }
-.unit p{ color:var(--ink-dim); font-size:15px; max-width:44ch; margin-bottom:24px; text-wrap:pretty; }
-.unit .bom{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:26px; }
-.unit .bom span{ font-family:"Space Mono",monospace; font-size:11px; letter-spacing:.08em; color:var(--ink-dim); border:1px solid var(--line); padding:5px 10px; }
-.unit .schem{ height:140px; border:1px solid var(--line); position:relative; overflow:hidden; color:var(--ink-faint); background:radial-gradient(circle at 1px 1px, var(--grid-strong) 1px, transparent 0) 0 0/16px 16px; }
-.unit:hover .schem{ color:var(--accent); }
-.unit .schem svg{ position:absolute; inset:0; width:100%; height:100%; }
-.unit .open{ position:absolute; right:clamp(26px,3vw,40px); bottom:clamp(26px,3vw,40px); width:42px; height:42px; border:1px solid var(--line); border-radius:50%; display:grid; place-items:center; transition:.3s; }
-.unit:hover .open{ background:var(--accent); border-color:var(--accent); color:var(--bg); transform:rotate(-45deg); }
+/* tech stack: physics */
+.stack { padding-bottom: 0; }
+.stack-box { position: relative; height: 560px; margin-top: 40px; border-top: 1px solid var(--line); }
+.stack-box canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.stack-fallback { display: none; flex-wrap: wrap; gap: 10px; padding: 40px 0; }
+.stack-fallback li { padding: 10px 18px; border-radius: 30px; background: var(--panel); border: 1px solid var(--line); }
+.stack-hint { color: var(--muted); margin-top: 8px; }
 
-.record{ position:relative; padding-left:clamp(30px,6vw,90px); }
-.record .axis{ position:absolute; left:clamp(12px,3vw,30px); top:0; bottom:0; width:1px; background:var(--line); }
-.record .axis .fill{ position:absolute; top:0; left:0; width:100%; height:0; background:var(--accent); }
-.station{ position:relative; padding:24px 0 46px; }
-.station .node{ position:absolute; left:calc(-1 * clamp(30px,6vw,90px) + clamp(7px,3vw,25px)); top:30px; width:12px; height:12px; border:2px solid var(--ink-faint); background:var(--bg); transform:rotate(45deg); transition:.3s; }
-.station.on .node{ border-color:var(--accent); background:var(--accent); box-shadow:0 0 12px var(--glow); }
-.station .yr{ font-family:"Space Mono",monospace; font-size:12px; letter-spacing:.16em; color:var(--accent); }
-.station h3{ font-size:clamp(22px,3vw,40px); text-transform:uppercase; margin:8px 0 4px; }
-.station .co{ font-family:"Space Mono",monospace; font-size:13px; color:var(--ink-dim); }
-.station p{ color:var(--ink-dim); max-width:60ch; margin-top:12px; text-wrap:pretty; }
+/* contact */
+.contact { padding: 150px 0 50px; overflow: hidden; }
+.contact .big { max-width: 12em; }
+.contact .mail-big { display: inline-block; margin-top: 44px; font-size: clamp(22px, 3.2vw, 44px); font-weight: 700; letter-spacing: -.02em; text-decoration: none; border-bottom: 2px solid rgba(255, 255, 255, .25); padding-bottom: 6px; transition: border-color .3s; }
+.contact .mail-big:hover { border-color: var(--pink); }
+.contact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 80px; padding-top: 34px; border-top: 1px solid var(--line); }
+.contact-grid h4 { margin: 0 0 12px; color: var(--muted); font-weight: 500; font-size: 14px; letter-spacing: .1em; }
+.contact-grid a { display: block; text-decoration: none; font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+.contact-grid a:hover { color: var(--pink); }
+.foot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 70px; color: var(--muted); font-size: 14px; }
 
-.bomtable{ border:1px solid var(--line); font-family:"Space Mono",monospace; }
-.bomtable .hd,.bomtable .row{ display:grid; grid-template-columns:64px 1fr 120px 88px; }
-.bomtable .hd{ background:var(--bg2); border-bottom:1px solid var(--line); }
-.bomtable .hd div{ padding:13px 16px; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-dim); }
-.bomtable .row{ border-bottom:1px solid var(--line); transition:background .2s; }
-.bomtable .row:last-child{ border-bottom:none; }
-.bomtable .row:hover{ background:var(--bg2); }
-.bomtable .row div{ padding:14px 16px; font-size:13px; display:flex; align-items:center; }
-.bomtable .row .it{ color:var(--accent); }
-.bomtable .row .ds{ color:var(--ink); font-family:"Archivo",sans-serif; font-weight:600; letter-spacing:0; text-transform:uppercase; font-size:14px; }
-.bomtable .row .qt{ color:var(--ink-dim); } .bomtable .row .lv{ color:var(--ink-dim); } .bomtable .row .lv b{ color:var(--accent3); font-weight:700; }
-@media (max-width:680px){ .bomtable .hd,.bomtable .row{ grid-template-columns:48px 1fr 70px; } .bomtable .hd .h4,.bomtable .row .lv{ display:none; } }
-
-.creds-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); }
-@media (max-width:780px){ .creds-grid{ grid-template-columns:1fr; } }
-.creds-col{ background:var(--bg); padding:clamp(22px,2.6vw,34px); }
-.creds-h{ color:var(--accent); margin-bottom:22px; }
-.cred{ padding:16px 0; border-top:1px solid var(--line); }
-.cred:first-of-type{ border-top:none; }
-.cred .cy{ font-family:"Space Mono",monospace; font-size:11px; letter-spacing:.14em; color:var(--accent); margin-bottom:6px; }
-.cred .cn{ font-size:clamp(16px,1.7vw,20px); font-weight:700; text-transform:uppercase; letter-spacing:-.01em; line-height:1.1; }
-.cred .cd{ color:var(--ink-dim); font-size:13px; margin-top:5px; }
-
-.req{ text-align:center; }
-.req .big{ font-size:clamp(46px,11vw,150px); text-transform:uppercase; line-height:.86; letter-spacing:-.03em; display:inline-block; }
-.req .big .o{ -webkit-text-stroke:1.5px var(--ink); color:transparent; transition:.3s; }
-.req .big:hover .o{ color:var(--accent); -webkit-text-stroke-color:var(--accent); }
-.req .sub{ color:var(--ink-dim); margin:28px auto 38px; max-width:48ch; }
-.req .acts{ display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
-.req .btn{ font-family:"Space Mono",monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; padding:16px 30px; border:1px solid var(--line); display:inline-flex; gap:10px; align-items:center; transition:.25s; }
-.req .btn.pri{ background:var(--accent); border-color:var(--accent); color:var(--bg); }
-.req .btn:hover{ transform:translateY(-3px); border-color:var(--accent); }
-
-.titleblock{ border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
-.tb-grid{ display:grid; grid-template-columns:repeat(4,1fr); }
-@media (max-width:780px){ .tb-grid{ grid-template-columns:repeat(2,1fr); } }
-.tb-cell{ border-right:1px solid var(--line); padding:22px clamp(18px,2.4vw,30px); }
-.tb-cell:last-child{ border-right:none; }
-.tb-cell .k{ font-family:"Space Mono",monospace; font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-dim); margin-bottom:8px; }
-.tb-cell .v{ font-size:16px; font-weight:700; text-transform:uppercase; letter-spacing:-.01em; }
-.tb-cell .v.am{ color:var(--accent); }
-.foot{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:14px; padding:26px 0 60px; }
-.foot a{ font-family:"Space Mono",monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-dim); }
-.foot a:hover{ color:var(--accent); } .foot .socials{ display:flex; gap:22px; }
-
-.reveal{ opacity:1; transform:none; }
-html.anim .reveal{ opacity:0; transform:translateY(34px); transition:opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1); }
-html.anim .reveal.in{ opacity:1; transform:none; }
-@media (prefers-reduced-motion:reduce){ html.anim .reveal{ opacity:1; transform:none; } *,*::before,*::after{ animation-duration:.001ms!important; } }
+/* ---------- small screens ---------- */
+@media (max-width: 960px) {
+  .hero-grid { grid-template-columns: 1fr; text-align: left; gap: 34px; padding-top: 100px; }
+  .role { text-align: left; order: 2; }
+  .device { order: 3; justify-self: center; }
+  .nav nav { display: none; }
+  .what-grid, .oss-card { grid-template-columns: 1fr; }
+  .career-rail, .career-item::after { left: 7px; }
+  .career-item { grid-template-columns: 1fr; gap: 14px; padding-left: 40px; }
+  .career-item .left { flex-direction: column-reverse; }
+  .scroll-hint { display: none; }
+  .track-wrap { overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 90px; }
+  .card { scroll-snap-align: start; }
+}
+@media (max-width: 560px) {
+  .wrap { padding: 0 18px; }
+  .nav { padding: 16px 18px; }
+  .nav .mail { display: none; }
+  section { padding: 90px 0; }
+  .phone { width: 270px; }
+  .apps { gap: 18px 6px; padding: 84px 14px 0; }
+  .apps img, .dock img { width: 56px; height: 56px; border-radius: 13px; }
+  .track { padding: 0 18px; }
+  .card { width: 300px; min-height: 420px; padding: 24px; }
+  .what { padding: 26px; }
+  .oss-card { padding: 26px; }
+  .contact-grid { grid-template-columns: 1fr; }
+  .stack-box { height: 480px; }
+}
 </style>
 </head>
 <body>
+<a class="skip" href="#about">Skip to content</a>
 
-<div class="chrome" aria-hidden="true">
-  <div class="frame"></div><div class="ruler top"></div><div class="ruler left"></div>
-  <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+<div id="loader" aria-hidden="true">
+  <div class="marquee"><div class="mq-track">
+    <span>SENIOR FLUTTER DEVELOPER</span><b></b><span>MOBILE ENGINEER</span><b></b><span>10 LIVE APPS</span><b></b>
+    <span>SENIOR FLUTTER DEVELOPER</span><b></b><span>MOBILE ENGINEER</span><b></b><span>10 LIVE APPS</span><b></b>
+  </div></div>
+  <div class="pill"><span id="ltext">LOADING</span><span id="pct">0%</span></div>
 </div>
-<div class="scan" aria-hidden="true"></div>
-<div class="cross" aria-hidden="true"><span class="hx"></span><span class="vx"></span><span class="coord">0000,0000</span></div>
+<div class="cursor" aria-hidden="true"></div>
 
-<nav class="nav">
-  <a href="#top" class="brand"><b>A.REDA</b><span class="vr"></span>FLUTTER ENGINEERING</a>
-  <div class="right">
-    <a href="#units" class="lnk">Fig.02 / Units</a>
-    <a href="#record" class="lnk">Fig.03 / Record</a>
-    <a href="#bom" class="lnk">Fig.04 / BOM</a>
-    <div class="tswitch" title="Drawing medium">
-      <button class="b on" data-theme="blackprint" title="Blackprint"></button>
-      <button class="d" data-theme="draft" title="Draft / sepia"></button>
-    </div>
-  </div>
-</nav>
+<header class="nav" id="nav">
+  <a class="brand" href="#top">Ahmed Elgharbawy</a>
+  <a class="mail" href="mailto:devahmedelgharbawy@gmail.com">devahmedelgharbawy@gmail.com</a>
+  <nav aria-label="Sections">
+    <a href="#about">ABOUT</a>
+    <a href="#work">WORK</a>
+    <a href="#contact">CONTACT</a>
+  </nav>
+</header>
 
-<!-- ===== TEARDOWN STAGE ===== -->
-<section class="teardown" id="top" data-screen-label="Teardown">
-  <div class="stage" id="stage">
-    <div class="scene" id="scene">
-      <canvas id="gl"></canvas>
-      <svg class="lead3d" id="lead3d"><line x1="0" y1="0" x2="0" y2="0"></line><circle cx="0" cy="0" r="3"></circle></svg>
-      <div class="tag3d" id="tag3d"><div class="id" id="tag3dId">L05</div><div class="nm" id="tag3dNm">Motion</div></div>
-    </div>
-
-    <div class="hero-ov" id="heroOv">
-      <div class="fig"><span class="dot"></span><span class="tlabel">Fig.01 — Subject under inspection</span></div>
-      <h1>Ahmed<br><span class="o">Reda</span></h1>
-      <p class="sub"><b>Senior Flutter Developer.</b> 4+ years building mobile apps people actually use — across healthcare, fintech and enterprise. I take products from zero to the App Store. This is a teardown of how one is built.</p>
-    </div>
-
-    <div class="hud" id="hud">
-      <div class="big" id="hudId">L05</div>
-      <div class="nm" id="hudName">Motion</div>
-      <div class="sub" id="hudSub">Layer 5 / 5 · isolated</div>
-    </div>
-
-    <div class="readout" id="readout"><div class="desc" id="roDesc"></div><div class="specs" id="roSpecs"></div></div>
-
-    <div class="controls">
-      <button class="dismantle" id="dismantle">Dismantle <span id="dmArrow">⟶</span></button>
-      <div class="hint"><span class="ico"></span>Drag to orbit</div>
-    </div>
-
-    <div class="rail" id="rail"></div>
-    <div class="cue" id="cue"><span>Scroll to begin teardown</span><span class="ln"></span></div>
-  </div>
-</section>
-
-<!-- ===== FIELD UNITS ===== -->
-<section class="section" id="units">
-  <div class="wrap">
-    <div class="sec-tag reveal"><span class="fig">Fig.02</span><h2>Field Units</h2><span class="rule"></span><span class="tlabel">Deployed / 10+</span></div>
-    <div class="units reveal">
-      <article class="unit">
-        <div class="top"><span class="pno">UNIT-001</span><span class="status">Live · Both stores</span></div>
-        <h3>Sanad Rewards</h3>
-        <p>Health &amp; wellness platform with Apple Health &amp; Google Fit sync, a multimedia hub (articles, podcasts, videos) and offline-first support. Custom Lottie-animated calendar and community feed.</p>
-        <div class="bom"><span>Flutter</span><span>BLoC</span><span>Apple Health</span><span>Google Fit</span><span>Firebase</span></div>
-        <div class="schem"><svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid meet"><circle cx="200" cy="70" r="44" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="200" cy="70" r="30" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4"/><path d="M120 70h26l10-22 14 44 12-30 8 18h26M244 70h36M200 14v14" stroke="currentColor" stroke-width="1.2" fill="none"/></svg></div>
-        <a class="open" href="#" aria-label="Sanad Rewards">↗</a>
-      </article>
-      <article class="unit">
-        <div class="top"><span class="pno">UNIT-002</span><span class="status">GraphQL · Live</span></div>
-        <h3>League Plus</h3>
-        <p>Cross-platform sports prediction platform with real-time match predictions and custom leagues. GraphQL live sync with optimistic UI, deep-linking referral engine and FCM match alerts.</p>
-        <div class="bom"><span>Flutter</span><span>BLoC</span><span>GraphQL</span><span>Deep Links</span><span>Hive</span></div>
-        <div class="schem"><svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid meet"><path d="M80 110V70M120 110V40M160 110V84M200 110V28M240 110V60M280 110V48M320 110V72" stroke="currentColor" stroke-width="6" opacity=".55"/><path d="M80 70l40-30 40 44 40-56 40 32 40-12 40 24" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M70 118h260" stroke="currentColor" stroke-width="1"/></svg></div>
-        <a class="open" href="#" aria-label="League Plus">↗</a>
-      </article>
-      <article class="unit">
-        <div class="top"><span class="pno">UNIT-003</span><span class="status">POS · Offline-first</span></div>
-        <h3>The Kitchen</h3>
-        <p>Full restaurant POS &amp; management: order handling, inventory and reporting on an offline-first architecture so service never stops when the network does.</p>
-        <div class="bom"><span>Flutter</span><span>BLoC</span><span>REST</span><span>Firebase</span><span>Local Storage</span></div>
-        <div class="schem"><svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid meet"><path d="M168 22h64l-6 96H174z" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M180 44h40M180 60h40M180 76h28" stroke="currentColor" stroke-width="1"/><path d="M168 118l8 10 12-8 12 8 12-8 12 8 8-10" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M120 70H96M304 70h-24" stroke="currentColor" stroke-width="1" stroke-dasharray="3 4"/></svg></div>
-        <a class="open" href="#" aria-label="The Kitchen">↗</a>
-      </article>
-      <article class="unit">
-        <div class="top"><span class="pno">UNIT-004</span><span class="status">Maps · Realtime</span></div>
-        <h3>Salute</h3>
-        <p>Medical transport &amp; emergency app with real-time ambulance tracking via Google Maps &amp; Socket.IO, automated appointment scheduling and a driver–patient matching algorithm with route optimisation.</p>
-        <div class="bom"><span>Flutter</span><span>Cubit</span><span>Maps SDK</span><span>Socket.IO</span><span>Firestore</span></div>
-        <div class="schem"><svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid meet"><path d="M90 110q40-70 90-50t110-30" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="5 5"/><path d="M200 36a16 16 0 0 1 16 16c0 12-16 28-16 28s-16-16-16-28a16 16 0 0 1 16-16z" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M200 46v12M194 52h12" stroke="currentColor" stroke-width="1.4"/><circle cx="90" cy="110" r="4" fill="currentColor"/><circle cx="300" cy="46" r="4" fill="currentColor"/></svg></div>
-        <a class="open" href="#" aria-label="Salute">↗</a>
-      </article>
-      <article class="unit">
-        <div class="top"><span class="pno">UNIT-005</span><span class="status">HLS / RTMP</span></div>
-        <h3>I-News TV</h3>
-        <p>Live news streaming with HLS/RTMP adaptive-bitrate playback, a custom video player, playlist management and breaking-news push notifications.</p>
-        <div class="bom"><span>Flutter</span><span>BLoC</span><span>Video Streaming</span><span>Firebase</span><span>WebView</span></div>
-        <div class="schem"><svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid meet"><rect x="150" y="38" width="100" height="64" rx="6" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M188 56l24 14-24 14z" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M120 70q-12-14 0-28M104 70q-22-24 0-48M280 70q12-14 0-28M296 70q22-24 0-48" fill="none" stroke="currentColor" stroke-width="1"/></svg></div>
-        <a class="open" href="#" aria-label="I-News TV">↗</a>
-      </article>
-      <article class="unit">
-        <div class="top"><span class="pno">UNIT-006</span><span class="status">AR / EN · RTL</span></div>
-        <h3>A Year in Review</h3>
-        <p>Medical conference app: QR attendance, workshop enrollment, real-time Q&amp;A and moderator interaction. Full Arabic / English localisation with complete RTL layout handling.</p>
-        <div class="bom"><span>Flutter</span><span>Cubit</span><span>REST</span><span>Firebase</span><span>Localization</span></div>
-        <div class="schem"><svg viewBox="0 0 400 140" preserveAspectRatio="xMidYMid meet"><rect x="166" y="36" width="68" height="68" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M176 46h16v16h-16zM208 46h16v16h-16zM176 78h16v16h-16zM208 78h10v6M218 88v6h-10" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M120 70H96M304 70h-24" stroke="currentColor" stroke-width="1" stroke-dasharray="3 4"/></svg></div>
-        <a class="open" href="#" aria-label="A Year in Review">↗</a>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- ===== SERVICE RECORD ===== -->
-<section class="section" id="record">
-  <div class="wrap">
-        <div class="sec-tag reveal"><span class="fig">Fig.03</span><h2>Service Record</h2><span class="rule"></span><span class="tlabel">4+ yrs in service</span></div>
-    <div class="record">
-      <div class="axis" id="recAxis"><div class="fill"></div></div>
-      <div class="station"><div class="node"></div><div class="yr">APR 2024 — PRESENT</div><h3>Senior Flutter Developer</h3><div class="co">// Girix Solutions · Cairo · Full-time</div><p>Lead end-to-end mobile development for 3+ enterprise clients, owning the full lifecycle from requirements to production. Architected Flutter solutions with Clean Architecture &amp; MVVM, mentor 2 junior developers, set team coding standards, and published 4 apps across both stores at a consistent 60fps.</p></div>
-      <div class="station"><div class="node"></div><div class="yr">OCT 2023 — PRESENT</div><h3>Software Engineer — Mobile</h3><div class="co">// Sanad · Cairo · Part-time</div><p>Engineered a health-challenge platform integrating Apple Health &amp; Google Fit with real-time fitness sync. Built a full multimedia platform (articles, podcasts, videos, community feed) with offline-first support, plus a custom Lottie-animated calendar and location-based challenge tracking.</p></div>
-      <div class="station"><div class="node"></div><div class="yr">MAY 2024 — MAR 2025</div><h3>Flutter Engineer</h3><div class="co">// League Plus · Cairo · Contract</div><p>Architected and shipped a cross-platform sports-prediction platform with real-time predictions and custom leagues. Built GraphQL integration for low-latency live data, a deep-linking referral engine that grew acquisition, and FCM push notifications.</p></div>
-      <div class="station"><div class="node"></div><div class="yr">AUG 2021 — NOV 2023</div><h3>Flutter Developer</h3><div class="co">// Freelance · Remote</div><p>Delivered 6+ production apps across healthcare, media and transportation — owning requirements, architecture, development, testing and store deployment. Integrated payment gateways, real-time chat (Agora), Google Maps and thermal printing, and built reusable component libraries. All delivered on time, zero mid-engagement churn.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== BOM ===== -->
-<section class="section" id="bom">
-  <div class="wrap">
-    <div class="sec-tag reveal"><span class="fig">Fig.04</span><h2>Bill of Materials</h2><span class="rule"></span><span class="tlabel">Components</span></div>
-    <div class="bomtable reveal">
-      <div class="hd"><div>Item</div><div>Designation</div><div class="h3">Class</div><div class="h4">Level</div></div>
-      <div class="row"><div class="it">01</div><div class="ds">Flutter &amp; Dart</div><div class="qt">Framework</div><div class="lv"><b>Expert</b></div></div>
-      <div class="row"><div class="it">02</div><div class="ds">BLoC / Cubit / Riverpod / GetX</div><div class="qt">State</div><div class="lv"><b>Expert</b></div></div>
-      <div class="row"><div class="it">03</div><div class="ds">Clean Architecture / MVVM</div><div class="qt">Pattern</div><div class="lv"><b>Expert</b></div></div>
-      <div class="row"><div class="it">04</div><div class="ds">REST / GraphQL / WebSockets</div><div class="qt">Data</div><div class="lv"><b>Expert</b></div></div>
-      <div class="row"><div class="it">05</div><div class="ds">Firebase / Firestore / Hive / SQLite</div><div class="qt">Backend</div><div class="lv">Advanced</div></div>
-      <div class="row"><div class="it">06</div><div class="ds">Android / Jetpack Compose / Kotlin</div><div class="qt">Native</div><div class="lv">Advanced</div></div>
-      <div class="row"><div class="it">07</div><div class="ds">Apple Health / Google Fit / Maps / Agora</div><div class="qt">Integrations</div><div class="lv">Advanced</div></div>
-      <div class="row"><div class="it">08</div><div class="ds">CI/CD / Fastlane / FCM / GoRouter</div><div class="qt">DevOps</div><div class="lv">Advanced</div></div>
-      <div class="row"><div class="it">09</div><div class="ds">Unit / Widget / Integration Testing</div><div class="qt">Quality</div><div class="lv">Advanced</div></div>
-      <div class="row"><div class="it">10</div><div class="ds">Technical Leadership / Mentoring</div><div class="qt">Team</div><div class="lv">Advanced</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== CREDENTIALS ===== -->
-<section class="section" id="creds">
-  <div class="wrap">
-    <div class="sec-tag reveal"><span class="fig">Fig.05</span><h2>Credentials</h2><span class="rule"></span><span class="tlabel">Certified</span></div>
-    <div class="creds-grid reveal">
-      <div class="creds-col">
-        <div class="creds-h tlabel">Education</div>
-        <div class="cred"><div class="cy">2016 — 2020</div><div class="cn">BSc Computer Science</div><div class="cd">Faculty of Computer &amp; Information Sciences, Mansoura University (FCIS)</div></div>
-        <div class="cred"><div class="cy">2019</div><div class="cn">Full-Stack .NET Web Development</div><div class="cd">Information Technology Institute (ITI)</div></div>
-      </div>
-      <div class="creds-col">
-        <div class="creds-h tlabel">Licences &amp; Certifications</div>
-        <div class="cred"><div class="cy">MAR 2025</div><div class="cn">Flutter Advanced — Clean Architecture &amp; MVVM</div><div class="cd">Udemy</div></div>
-        <div class="cred"><div class="cy">MAR 2025</div><div class="cn">Certified Software Engineer</div><div class="cd">HackerRank</div></div>
-        <div class="cred"><div class="cy">2020 — 2021</div><div class="cn">Clean Architecture &amp; Testing Masterclass</div><div class="cd">Udemy</div></div>
-        <div class="cred"><div class="cy">2018</div><div class="cn">Google Developer Challenge Scholarship</div><div class="cd">Mobile Web</div></div>
+<main id="top">
+<div class="hero">
+  <div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div>
+  <div class="wrap hero-grid">
+    <div class="intro">
+      <p class="hello">Hello! I'm</p>
+      <h1 class="name"><span class="line"><span class="w">Ahmed</span></span><span class="line"><span class="w">Elgharbawy</span></span></h1>
+      <p class="hero-sub">Flutter developer in Cairo. 5+ years, ten apps live on Google Play and the App Store.</p>
+      <div class="hero-cta">
+        <a class="btn fill" href="resume.pdf" download="Ahmed_Elgharbawy_Senior_Flutter_CV.pdf">Download CV</a>
+        <a class="btn ghost" href="#contact">Hire me</a>
       </div>
     </div>
+
+    <div class="device">
+      <div class="phone" id="phone">
+        <div class="screen">
+          <div class="wall" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+          <div class="status" aria-hidden="true">
+            <span id="clock">9:41</span><span class="island"></span>
+            <span class="bars"><i style="height:5px"></i><i style="height:7px"></i><i style="height:9px"></i><i style="height:11px"></i></span>
+          </div>
+          <div class="notif" id="notif" aria-hidden="true"><img alt="" src="apps/islami-hub.png"><div><b></b><span></span></div><time>now</time></div>
+          <ul class="apps" aria-label="Apps I built that are live in the stores">
+            <li><a data-android="https://play.google.com/store/apps/details?id=com.ubd.sanad" href="https://apps.apple.com/eg/app/sanad-rewards/id6448073834"><img src="apps/sanad-rewards.png" alt="" width="62" height="62"><span>Sanad Rewards</span></a></li>
+            <li><a data-android="https://play.google.com/store/apps/details?id=com.sanadrewards.business" href="https://apps.apple.com/us/app/sanad-business/id6805096924"><img src="apps/sanad-business.png" alt="" width="62" height="62"><span>Sanad Business</span></a></li>
+            <li><a data-android="https://play.google.com/store/apps/details?id=com.sanadrewards.sanad.pulse" href="https://apps.apple.com/eg/app/pulse-trainer/id6767938059"><img src="apps/pulse.png" alt="" width="62" height="62"><span>Pulse</span></a></li>
+            <li><a data-android="https://play.google.com/store/apps/details?id=com.thekitchen.pos" href="https://apps.apple.com/us/app/the-kitchen/id6759858829"><img src="apps/the-kitchen.png" alt="" width="62" height="62"><span>The Kitchen</span></a></li>
+            <li><a data-android="https://play.google.com/store/apps/details?id=com.websoft.rawafed_app" href="https://apps.apple.com/us/app/rawafed-%D8%B1%D9%88%D8%A7%D9%81%D8%AF/id6758261806"><img src="apps/rawafed.png" alt="" width="62" height="62"><span>Rawafed</span></a></li>
+            <li><a href="https://apps.apple.com/us/app/crm-gts/id6755529911"><img src="apps/crm-gts.png" alt="" width="62" height="62"><span>CRM GTS</span></a></li>
+          </ul>
+          <div class="pager" aria-hidden="true"><i></i><i></i></div>
+          <ul class="dock" aria-label="More live apps">
+            <li><a href="https://apps.apple.com/eg/app/islami-hub/id6756878998"><img src="apps/islami-hub.png" alt="" width="62" height="62"><span>Islami Hub</span></a></li>
+            <li><a data-android="https://play.google.com/store/apps/details?id=com.yearinreview.app" href="https://apps.apple.com/app/year-in-review/id6747784581"><img src="apps/year-in-review.png" alt="" width="62" height="62"><span>A Year in Review</span></a></li>
+            <li><a data-android="https://play.google.com/store/apps/details?id=com.abualgaitinews.app" href="https://apps.apple.com/us/app/%D9%82%D9%86%D8%A7%D8%A9-%D8%A7%D9%8A-%D9%86%D9%8A%D9%88%D8%B2-%D8%A7%D9%84%D9%81%D8%B6%D8%A7%D8%A6%D9%8A%D8%A9/id1532198502"><img src="apps/inews-tv.png" alt="" width="62" height="62"><span>I-News TV</span></a></li>
+          </ul>
+          <div class="home-bar" aria-hidden="true"></div>
+          <div class="launch" id="launch" aria-hidden="true"><img alt="" src="apps/sanad-rewards.png"><span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="role">
+      <p class="a">A senior</p>
+      <span class="rot r1"><span>Flutter</span></span>
+      <span class="rot r2"><span>Developer</span></span>
+    </div>
+  </div>
+  <p class="scroll-hint" aria-hidden="true">SCROLL</p>
+</div>
+
+<section id="about" class="about">
+  <div class="wrap">
+    <p class="kicker">ABOUT ME</p>
+    <p id="about-text">I build Flutter apps people use every day. Ten of them are live, from health challenges that sync with Apple Health to a restaurant POS that keeps taking orders when the internet drops. I usually own the architecture and the release, from first commit to store listing.</p>
   </div>
 </section>
 
-<!-- ===== REQUISITION ===== -->
-<section class="section" id="contact">
-  <div class="wrap req">
-    <span class="tlabel reveal">Fig.06 — Requisition</span>
-    <div class="reveal" style="margin-top:20px;"><a class="big" href="mailto:devahmedelgharbawy@gmail.com"><span>Request</span><br><span class="o">Build</span></a></div>
-    <p class="sub reveal">Have a product that needs to feel engineered, not assembled? I'm open to senior Flutter roles and select freelance commissions — based in Cairo, working worldwide.</p>
-    <div class="acts reveal">
-      <a class="btn pri" href="mailto:devahmedelgharbawy@gmail.com" data-magnetic>Email me ⟶</a>
-      <a class="btn" href="resume.pdf" download data-magnetic>Download spec sheet (CV)</a>
+<section id="what">
+  <div class="wrap">
+    <h2 class="big">What <span class="out">I do</span></h2>
+    <div class="what-grid">
+      <article class="what">
+        <div class="shine"></div>
+        <h3>Mobile apps</h3>
+        <p class="sub">From first commit to the store</p>
+        <p>I take Flutter apps from requirements to Google Play and the App Store: architecture, state, testing and release. After launch I keep them healthy, and ship Shorebird patches so fixes don't wait for store review.</p>
+        <ul class="tags"><li>Flutter</li><li>Dart</li><li>BLoC / Cubit</li><li>Clean Architecture</li><li>MVVM</li><li>GoRouter</li><li>Testing</li><li>Fastlane</li><li>Shorebird</li></ul>
+      </article>
+      <article class="what">
+        <div class="shine"></div>
+        <h3>Integrations</h3>
+        <p class="sub">The hard parts users never see</p>
+        <p>Health data from Apple Health and Google Fit, offline-first sync queues, payments, real-time chat and maps, thermal printers, and ZATCA Phase 2 e-invoicing for Saudi point of sale.</p>
+        <ul class="tags"><li>Apple Health</li><li>Google Fit</li><li>Hive</li><li>Dio</li><li>GraphQL</li><li>Pusher</li><li>Agora</li><li>Google Maps</li><li>ZATCA</li><li>Sunmi printers</li></ul>
+      </article>
     </div>
   </div>
 </section>
 
-<div class="titleblock"><div class="wrap"><div class="tb-grid">
-  <div class="tb-cell"><div class="k">Engineer</div><div class="v am">A. R. Elgharbawy</div></div>
-  <div class="tb-cell"><div class="k">Discipline</div><div class="v">Senior Flutter Developer</div></div>
-  <div class="tb-cell"><div class="k">Station</div><div class="v">Cairo, Egypt</div></div>
-  <div class="tb-cell"><div class="k">Contact</div><div class="v">+20 111 664 4523</div></div>
-</div></div></div>
-<footer class="foot wrap">
-  <div class="copy tlabel">© 2026 Ahmed Reda Elgharbawy — Engineered with Flutter</div>
-  <div class="socials"><a href="https://github.com/devahmedelgharbawy" target="_blank" rel="noopener">GitHub</a><a href="https://linkedin.com/in/devreda" target="_blank" rel="noopener">LinkedIn</a><a href="mailto:devahmedelgharbawy@gmail.com">Email</a></div>
+<section id="career">
+  <div class="wrap">
+    <h2 class="big">My career <span class="out">&amp; experience</span></h2>
+    <div class="career-list">
+      <div class="career-rail" aria-hidden="true"><i></i></div>
+      <article class="career-item">
+        <div class="left"><div><h3>Senior Flutter Developer</h3><p class="co">Girix Solutions, full-time</p></div><p class="yr">2024</p></div>
+        <ul>
+          <li>Lead mobile development across 6 apps shipped to both stores, including The Kitchen, Rawafed, CRM GTS and Islami Hub</li>
+          <li>Set up the Clean Architecture / MVVM structure the team uses; mentor 2 junior developers through code review</li>
+          <li>Fixed frame drops with isolates, lazy lists and fewer rebuilds; cut startup time by deferring SDK setup</li>
+        </ul>
+      </article>
+      <article class="career-item">
+        <div class="left"><div><h3>Flutter Engineer</h3><p class="co">League Plus, contract</p></div><p class="yr">2024</p></div>
+        <ul>
+          <li>Built and shipped a sports-prediction app with private leagues users create and run</li>
+          <li>Live match data over GraphQL subscriptions, plus a deep-link referral flow straight into a league</li>
+        </ul>
+      </article>
+      <article class="career-item">
+        <div class="left"><div><h3>Mobile Software Engineer</h3><p class="co">Sanad, part-time</p></div><p class="yr">2023</p></div>
+        <ul>
+          <li>Built the health-challenge platform on Apple Health and Google Fit, with background step sync</li>
+          <li>Offline-first content (articles, podcasts, video, community); rebuilt Sanad Business as a standalone app; Pulse</li>
+          <li>Own releases on both stores and ship Shorebird over-the-air patches</li>
+        </ul>
+      </article>
+      <article class="career-item">
+        <div class="left"><div><h3>Flutter Developer</h3><p class="co">Freelance, remote</p></div><p class="yr">2021</p></div>
+        <ul>
+          <li>Shipped 4 production apps solo in healthcare, media and transport, from requirements to store release</li>
+          <li>Payment gateways, Agora real-time chat, Google Maps and thermal printing</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="work" class="work">
+  <div class="wrap work-head">
+    <h2 class="big">My <span class="out">work</span></h2>
+    <p>Ten apps, nine of them live. Every link opens the real store page.</p>
+  </div>
+  <div class="track-wrap">
+    <div class="track" id="track">
+      <article class="card"><span class="num">01</span><img class="ico" src="apps/sanad-rewards.png" alt="Sanad Rewards icon" width="84" height="84"><h3>Sanad Rewards</h3><p class="cat">Health challenges and rewards</p><p>Step challenges on Apple Health and Google Fit with background sync, team challenges, and an offline-first content hub.</p><p class="tools">Health plugin · Hive · Dio cache · Lottie · Shorebird</p><div class="links"><a href="https://apps.apple.com/eg/app/sanad-rewards/id6448073834">App Store</a><a href="https://play.google.com/store/apps/details?id=com.ubd.sanad">Google Play</a></div></article>
+      <article class="card"><span class="num">02</span><img class="ico" src="apps/sanad-business.png" alt="Sanad Business icon" width="84" height="84"><h3>Sanad Business</h3><p class="cat">Workplace wellbeing</p><p>Sanad's corporate wellness mode, rebuilt as a standalone Flutter app that matches the live app's behavior.</p><p class="tools">Clean Architecture · BLoC · flavors</p><div class="links"><a href="https://apps.apple.com/us/app/sanad-business/id6805096924">App Store</a><a href="https://play.google.com/store/apps/details?id=com.sanadrewards.business">Google Play</a></div></article>
+      <article class="card"><span class="num">03</span><img class="ico" src="apps/the-kitchen.png" alt="The Kitchen icon" width="84" height="84"><h3>The Kitchen</h3><p class="cat">Restaurant POS</p><p>Orders and inventory live in a local database, offline orders queue and sync with conflict handling, and tickets print straight to thermal printers.</p><p class="tools">Offline-first · sync queue · thermal printing</p><div class="links"><a href="https://apps.apple.com/us/app/the-kitchen/id6759858829">App Store</a><a href="https://play.google.com/store/apps/details?id=com.thekitchen.pos">Google Play</a></div></article>
+      <article class="card"><span class="num">04</span><img class="ico" src="apps/rawafed.png" alt="Rawafed icon" width="84" height="84"><h3>Rawafed</h3><p class="cat">Real estate services</p><p>Built from scratch as lead developer: property listings with search and maps, bookable service requests, and in-app payments.</p><p class="tools">Google Maps · payments · FCM · Arabic/English RTL</p><div class="links"><a href="https://apps.apple.com/us/app/rawafed-%D8%B1%D9%88%D8%A7%D9%81%D8%AF/id6758261806">App Store</a><a href="https://play.google.com/store/apps/details?id=com.websoft.rawafed_app">Google Play</a></div></article>
+      <article class="card"><span class="num">05</span><img class="ico" src="apps/crm-gts.png" alt="CRM GTS icon" width="84" height="84"><h3>CRM GTS</h3><p class="cat">Client self-service portal</p><p>Clients see their licensed programs, invoices with QR codes, and open support tickets and complaints with comment threads.</p><p class="tools">OTP reset · FCM + local notifications · offline retry</p><div class="links"><a href="https://apps.apple.com/us/app/crm-gts/id6755529911">App Store</a></div></article>
+      <article class="card"><span class="num">06</span><img class="ico" src="apps/islami-hub.png" alt="Islami Hub icon" width="84" height="84"><h3>Islami Hub</h3><p class="cat">Quran, prayer times and azkar · team of 3</p><p>My part: patched the alarm plugin's native Android code so the azan stays silent during calls, and built Daily Hadith with an offline fallback in 5 languages.</p><p class="tools">Native Android · Hive · location</p><div class="links"><a href="https://apps.apple.com/eg/app/islami-hub/id6756878998">App Store</a></div></article>
+      <article class="card"><span class="num">07</span><img class="ico" src="apps/pulse.png" alt="Pulse icon" width="84" height="84"><h3>Pulse</h3><p class="cat">Gym training and fitness</p><p>Real-time coach chat, pedometer step tracking, video workouts, and reminders that keep streaks going.</p><p class="tools">Pusher · pedometer · video · FCM</p><div class="links"><a href="https://apps.apple.com/eg/app/pulse-trainer/id6767938059">App Store</a><a href="https://play.google.com/store/apps/details?id=com.sanadrewards.sanad.pulse">Google Play</a></div></article>
+      <article class="card"><span class="num">08</span><img class="ico" src="apps/year-in-review.png" alt="A Year in Review icon" width="84" height="84"><h3>A Year in Review</h3><p class="cat">Medical conferences</p><p>QR attendance, workshop enrollment, and live Q&amp;A with moderators, fully in Arabic and English.</p><p class="tools">QR · Cubit · RTL</p><div class="links"><a href="https://apps.apple.com/app/year-in-review/id6747784581">App Store</a><a href="https://play.google.com/store/apps/details?id=com.yearinreview.app">Google Play</a></div></article>
+      <article class="card"><span class="num">09</span><img class="ico" src="apps/inews-tv.png" alt="I-News TV icon" width="84" height="84"><h3>I-News TV</h3><p class="cat">Live news streaming</p><p>HLS/RTMP adaptive-bitrate streaming, a custom video player, and breaking-news alerts.</p><p class="tools">Video streaming · Firebase</p><div class="links"><a href="https://apps.apple.com/us/app/%D9%82%D9%86%D8%A7%D8%A9-%D8%A7%D9%8A-%D9%86%D9%8A%D9%88%D8%B2-%D8%A7%D9%84%D9%81%D8%B6%D8%A7%D8%A6%D9%8A%D8%A9/id1532198502">App Store</a><a href="https://play.google.com/store/apps/details?id=com.abualgaitinews.app">Google Play</a></div></article>
+      <article class="card"><span class="num">10</span><span class="ico ph" aria-hidden="true">M</span><h3>Mini Sales &amp; Mini Wash</h3><p class="cat">Saudi point of sale</p><p>Offline-first POS with ZATCA Phase 2 e-invoicing: invoices signed on the device and uploaded through a queue when the network returns.</p><p class="tools">ZATCA · Sunmi printing · erp_calculator · 80+ test files</p><div class="links"><span>In development</span></div></article>
+    </div>
+  </div>
+</section>
+
+<section id="open-source">
+  <div class="wrap">
+    <h2 class="big">Open <span class="out">source</span></h2>
+    <div class="oss-card">
+      <div>
+        <h3><a href="https://pub.dev/packages/erp_calculator" style="text-decoration:none">erp_calculator</a></h3>
+        <p>A pure-Dart billing engine I publish on pub.dev: exclusive, inclusive and no-tax modes, item-level and bill-level discounts, and a step-by-step audit trail of every calculation. It's the billing core of Mini Sales and Mini Wash.</p>
+        <ul class="tags"><li>Verified publisher</li><li>140 / 160 pub points</li><li>Web + WASM</li><li>MIT</li></ul>
+        <div class="hero-cta"><a class="btn fill" href="https://pub.dev/packages/erp_calculator">View on pub.dev</a><a class="btn ghost" href="https://github.com/AhmedRedagh/erp_calculator-main">Source on GitHub</a></div>
+      </div>
+      <pre aria-label="Install command"><span class="c"># pubspec.yaml</span>
+<span class="k">dependencies:</span>
+  erp_calculator: <span class="s">^1.0.0</span>
+
+<span class="c"># or</span>
+dart pub add erp_calculator</pre>
+    </div>
+  </div>
+</section>
+
+<section id="stack" class="stack">
+  <div class="wrap">
+    <h2 class="big">My tech <span class="out">stack</span></h2>
+    <p class="stack-hint" id="stack-hint">Grab one and throw it.</p>
+  </div>
+  <div class="stack-box" id="stack-box">
+    <canvas id="stack-canvas" aria-hidden="true"></canvas>
+  </div>
+  <ul class="wrap stack-fallback" id="stack-fallback"></ul>
+</section>
+</main>
+
+<footer id="contact" class="contact">
+  <div class="glow g1" style="top:30%"></div>
+  <div class="wrap" style="position:relative">
+    <p class="kicker">CONTACT</p>
+    <h2 class="big">Let's build <span class="out">something people use</span></h2>
+    <a class="mail-big" href="mailto:devahmedelgharbawy@gmail.com">devahmedelgharbawy@gmail.com</a>
+    <div class="contact-grid">
+      <div><h4>PROFILES</h4><a href="https://www.linkedin.com/in/devreda/">LinkedIn</a><a href="https://github.com/AhmedRedagh">GitHub</a><a href="https://pub.dev/packages/erp_calculator">pub.dev</a></div>
+      <div><h4>CV</h4><a href="resume.pdf" download="Ahmed_Elgharbawy_Senior_Flutter_CV.pdf">Download CV (PDF)</a></div>
+      <div><h4>BASED IN</h4><a href="#top" tabindex="-1" style="pointer-events:none">Cairo, Egypt</a><p style="color:var(--muted)">Working with teams anywhere</p></div>
+    </div>
+    <div class="foot"><span>Designed and built by Ahmed Reda Elgharbawy</span><span>© 2026</span></div>
+  </div>
 </footer>
 
-<script src="https://unpkg.com/three@0.149.0/build/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
 <script>
-/* =====================================================================
-   TEARDOWN ENGINE — Three.js WebGL exploded view
-   ===================================================================== */
-(function(){
-  "use strict";
-  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
-  const lerp=(a,b,t)=>a+(b-a)*t;
-  const smooth=(e0,e1,x)=>{ const t=clamp((x-e0)/(e1-e0),0,1); return t*t*(3-2*t); };
-  const DEG=Math.PI/180;
+(function () {
+  var motion = document.documentElement.classList.contains('motion');
+  var fine = matchMedia('(pointer: fine)').matches;
+  var hasGsap = !!window.gsap;
+  var loader = document.getElementById('loader');
+  var stackNames = ['Flutter', 'Dart', 'BLoC', 'Firebase', 'Supabase', 'GraphQL', 'Hive', 'SQLite', 'Dio', 'GoRouter', 'Shorebird', 'Fastlane', 'GitHub Actions', 'Apple Health', 'Google Fit', 'Google Maps', 'Pusher', 'Agora', 'Lottie', 'Riverpod', 'ZATCA', 'Clean Arch'];
 
-  const LAYERS=[
-    {id:"L05",name:"Motion",sub:"Display assembly",type:"motion",
-     hw:"6.9″ ProMotion OLED · 120 Hz",
-     desc:"The surface nobody notices — until it's gone. Every tap, drag and transition is choreographed to feel instant and physical.",
-     specs:["60–120 fps adaptive","Implicit + explicit anim","Shared-axis transitions","Haptic synchronisation"]},
-    {id:"L04",name:"Widget Tree",sub:"Super Retina XDR panel",type:"widget",
-     hw:"2868 × 1320 · 460 ppi",
-     desc:"A composable tree of widgets renders the interface — declarative, responsive, and driven entirely by a design system.",
-     specs:["Composable widgets","Responsive layouts","Design-system tokens","Pixel-honest rendering"]},
-    {id:"L03",name:"State",sub:"Logic board",type:"state",
-     hw:"A19 Pro · 6-core GPU · 12 GB",
-     desc:"A reactive graph moves data through the app in one direction, so the UI is always a pure function of state.",
-     specs:["Riverpod / Bloc","Unidirectional flow","Testable notifiers","Zero wasted rebuilds"]},
-    {id:"L02",name:"Domain",sub:"Power core",type:"domain",
-     hw:"Dual-cell · 4,832 mAh",
-     desc:"Business rules live at the centre — entities and use-cases that know nothing about Flutter, the network, or the database.",
-     specs:["Entities & use-cases","Repository contracts","Framework-agnostic","SOLID boundaries"]},
-    {id:"L01",name:"Platform",sub:"Titanium frame",type:"platform",
-     hw:"Grade-5 Ti · 48 MP Fusion ×3",
-     desc:"At the base: native channels, persistence and the network — the metal the whole machine stands on.",
-     specs:["Method channels","Firebase / REST","Local persistence","CI/CD pipeline"]}
+  // ---------- phone: clock, Android links, notifications, launch ----------
+  var clock = document.getElementById('clock');
+  function tick() { try { clock.textContent = new Intl.DateTimeFormat('en-GB', { hour: 'numeric', minute: '2-digit', hour12: false, timeZone: 'Africa/Cairo' }).format(new Date()); } catch (e) {} }
+  tick(); setInterval(tick, 30000);
+
+  var phoneLinks = document.querySelectorAll('.apps a, .dock a');
+  if (/android/i.test(navigator.userAgent)) phoneLinks.forEach(function (a) { if (a.dataset.android) a.href = a.dataset.android; });
+
+  var notes = [
+    ['islami-hub', 'Islami Hub', 'Azan muted because you are on a call.'],
+    ['the-kitchen', 'The Kitchen', 'Order saved offline. It will sync when you are back online.'],
+    ['sanad-rewards', 'Sanad Rewards', 'Your steps synced from Apple Health.'],
+    ['pulse', 'Pulse', "Time for today's workout. Keep your streak going."],
+    ['crm-gts', 'CRM GTS', 'New reply on your support ticket.'],
+    ['sanad-business', 'Sanad Business', 'Your team moved up in the challenge.'],
+    ['rawafed', 'Rawafed', 'Your service request was updated.']
   ];
-  const N=LAYERS.length;
-
-  const teardown=document.querySelector(".teardown");
-  const stage=document.getElementById("stage");
-  const scene2d=document.getElementById("scene");
-  const canvas=document.getElementById("gl");
-  const heroOv=document.getElementById("heroOv"), hud=document.getElementById("hud");
-  const hudId=document.getElementById("hudId"), hudName=document.getElementById("hudName"), hudSub=document.getElementById("hudSub");
-  const readout=document.getElementById("readout"), roDesc=document.getElementById("roDesc"), roSpecs=document.getElementById("roSpecs");
-  const cue=document.getElementById("cue"), rail=document.getElementById("rail");
-  const dmBtn=document.getElementById("dismantle"), dmArrow=document.getElementById("dmArrow");
-  const lead3d=document.getElementById("lead3d"), leadLine=lead3d.querySelector("line"), leadDot=lead3d.querySelector("circle");
-  const tag3d=document.getElementById("tag3d"), tag3dId=document.getElementById("tag3dId"), tag3dNm=document.getElementById("tag3dNm");
-
-  LAYERS.forEach((L)=>{ const t=document.createElement("div"); t.className="t"; t.innerHTML='<span>'+L.id+' · '+L.name+'</span>'; rail.appendChild(t); });
-  const ticks=[...rail.children];
-
-  function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
-  let accentHex=cssVar("--accent")||"#ff6a1a";
-
-  /* ---------- schematic textures (canvas line-art) ---------- */
-  function makeTex(type){
-    const c=document.createElement("canvas"); c.width=512; c.height=1024; const g=c.getContext("2d");
-    g.scale(2,2); /* 2× resolution */
-    /* dark panel fill so line art is visible against the slab */
-    g.fillStyle="#0c1420"; g.fillRect(0,0,256,512);
-    g.strokeStyle="#ffffff"; g.fillStyle="#ffffff"; g.lineJoin="round";
-    const CX=128, CY=256;
-    /* engineering drawing helpers */
-    function txt(s,px,py,sz,al){ g.save(); g.globalAlpha=.9; g.font="700 "+(sz||9)+"px monospace"; g.textAlign=al||"center"; g.fillText(s,px,py); g.restore(); }
-    function hdim(y,x1,x2,label,off){
-      var dy=off||12; g.save(); g.globalAlpha=.5; g.lineWidth=.8;
-      g.beginPath(); g.moveTo(x1,y+dy); g.lineTo(x2,y+dy); g.stroke();
-      g.beginPath(); g.moveTo(x1,y+dy-3); g.lineTo(x1,y+dy+3); g.moveTo(x2,y+dy-3); g.lineTo(x2,y+dy+3); g.stroke();
-      g.setLineDash([2,3]); g.beginPath(); g.moveTo(x1,y); g.lineTo(x1,y+dy-1); g.moveTo(x2,y); g.lineTo(x2,y+dy-1); g.stroke(); g.setLineDash([]);
-      g.globalAlpha=.75; g.font="700 7px monospace"; g.textAlign="center"; g.fillText(label,(x1+x2)/2,y+dy-2); g.restore();
-    }
-    function vdim(xb,y1,y2,label,off){
-      var dx=off||12; g.save(); g.globalAlpha=.5; g.lineWidth=.8;
-      g.beginPath(); g.moveTo(xb+dx,y1); g.lineTo(xb+dx,y2); g.stroke();
-      g.beginPath(); g.moveTo(xb+dx-3,y1); g.lineTo(xb+dx+3,y1); g.moveTo(xb+dx-3,y2); g.lineTo(xb+dx+3,y2); g.stroke();
-      g.setLineDash([2,3]); g.beginPath(); g.moveTo(xb,y1); g.lineTo(xb+dx-1,y1); g.moveTo(xb,y2); g.lineTo(xb+dx-1,y2); g.stroke(); g.setLineDash([]);
-      g.save(); g.globalAlpha=.75; g.translate(xb+dx+3,(y1+y2)/2); g.rotate(-Math.PI/2); g.font="700 7px monospace"; g.textAlign="center"; g.fillText(label,0,0); g.restore(); g.restore();
-    }
-    function hatch(rx,ry,rw,rh,sp){
-      g.save(); g.globalAlpha=.14; g.lineWidth=.6; g.beginPath(); g.rect(rx,ry,rw,rh); g.clip();
-      for(var d=-rh;d<rw+rh;d+=(sp||8)){ g.beginPath(); g.moveTo(rx+d,ry); g.lineTo(rx+d-rh,ry+rh); g.stroke(); } g.restore();
-    }
-    function callout(label,x1,y1,x2,y2){
-      g.save(); g.globalAlpha=.55; g.lineWidth=.8; g.beginPath(); g.moveTo(x1,y1); g.lineTo(x2,y2); g.stroke();
-      g.beginPath(); g.arc(x1,y1,2,0,7); g.fill();
-      g.globalAlpha=.8; g.font="700 7px monospace"; g.textAlign="left"; g.fillText(label,x2+4,y2+3); g.restore();
-    }
-    if(type==="motion"){ /* DISPLAY ASSEMBLY — front orthographic */
-      g.lineWidth=2; g.globalAlpha=.9; g.beginPath(); g.roundRect(38,32,180,448,22); g.stroke();
-      g.lineWidth=1.4; g.globalAlpha=.8; g.beginPath(); g.roundRect(46,50,164,412,18); g.stroke();
-      hatch(46,50,164,412,8);
-      g.lineWidth=1.8; g.globalAlpha=1; g.beginPath(); g.roundRect(96,58,64,18,9); g.stroke();
-      g.beginPath(); g.arc(148,67,3.5,0,7); g.stroke();
-      hdim(32,38,218,"77.6",-14); vdim(218,32,480,"163.0",10);
-      g.globalAlpha=.6; g.lineWidth=.8; g.setLineDash([2,2]);
-      g.beginPath(); g.moveTo(38,54); g.lineTo(60,54); g.moveTo(60,32); g.lineTo(60,54); g.stroke(); g.setLineDash([]);
-      txt("R22",56,48,7);
-      g.globalAlpha=.5; txt("9:41",78,70,8); [192,200,208].forEach(function(px,i){ g.fillRect(px,62,2.5,6+i*1.5); });
-      g.lineWidth=1; g.globalAlpha=.3;
-      g.beginPath(); g.roundRect(56,160,144,32,6); g.stroke();
-      g.beginPath(); g.roundRect(56,204,144,32,6); g.stroke();
-      g.beginPath(); g.roundRect(56,248,144,32,6); g.stroke();
-      g.lineWidth=2; g.globalAlpha=.7;
-      g.fillRect(36,128,3,18); g.fillRect(36,166,3,34); g.fillRect(36,210,3,34);
-      g.fillRect(219,184,3,38);
-      g.lineWidth=1; g.globalAlpha=.5; g.fillRect(36,336,3,24);
-      callout("COVER GLASS",128,42,166,26); callout("DYNAMIC ISLAND",128,76,158,90);
-      callout("ACTION BTN",38,136,12,128); callout("POWER",220,202,236,196);
-      g.globalAlpha=.8; txt("DISPLAY ASSEMBLY",CX,498,8); txt("DETAIL A",CX,16,7);
-    } else if(type==="widget"){ /* OLED PANEL — panel + flex cables */
-      g.lineWidth=2; g.globalAlpha=.85; g.strokeRect(42,48,172,370);
-      g.lineWidth=.5; g.globalAlpha=.18;
-      for(var gx=54;gx<214;gx+=14){ g.beginPath(); g.moveTo(gx,48); g.lineTo(gx,418); g.stroke(); }
-      for(var gy=60;gy<418;gy+=14){ g.beginPath(); g.moveTo(42,gy); g.lineTo(214,gy); g.stroke(); }
-      g.globalAlpha=.65; [[80,112],[144,176],[112,256],[176,144],[96,320],[160,288]].forEach(function(p){ g.fillRect(p[0]-1.5,p[1]-1.5,3,3); });
-      g.lineWidth=1.4; g.globalAlpha=.8; g.beginPath(); g.roundRect(92,54,72,22,11); g.stroke();
-      g.setLineDash([3,3]); g.beginPath(); g.roundRect(86,48,84,34,14); g.stroke(); g.setLineDash([]);
-      g.lineWidth=1.6; g.globalAlpha=.8; g.beginPath(); g.moveTo(100,418); g.lineTo(100,448); g.lineTo(156,448); g.lineTo(156,418); g.stroke();
-      g.strokeRect(90,450,76,20);
-      g.lineWidth=.8; for(var f=96;f<162;f+=5){ g.beginPath(); g.moveTo(f,450); g.lineTo(f,470); g.stroke(); }
-      g.lineWidth=1.2; g.globalAlpha=.7; g.strokeRect(108,472,40,14); txt("ZIF",CX,483,7);
-      hdim(48,42,214,"161.0",-14); vdim(214,48,418,"111.8",10);
-      callout("OLED PANEL",128,100,168,86); callout("FLEX CABLE",128,440,168,434);
-      g.globalAlpha=.8; txt("OLED PANEL ASSY",CX,500,8); txt("DETAIL B",CX,16,7);
-    } else if(type==="state"){ /* LOGIC BOARD — PCB with components */
-      g.lineWidth=2; g.globalAlpha=.85; g.beginPath(); g.roundRect(34,70,188,360,8); g.stroke();
-      g.lineWidth=.7; g.globalAlpha=.25;
-      [[48,150,210,150],[48,200,140,200],[120,200,210,330],[48,370,210,370],[70,70,70,430],[186,100,186,430],[48,260,100,260],[156,260,210,260]].forEach(function(t){ g.beginPath(); g.moveTo(t[0],t[1]); g.lineTo(t[2],t[3]); g.stroke(); });
-      g.globalAlpha=.35; for(var i=0;i<24;i++){ var vx=50+(i*37)%170, vy=90+(i*53)%320; g.beginPath(); g.arc(vx,vy,1.5,0,7); g.fill(); }
-      g.lineWidth=2.4; g.globalAlpha=1; g.strokeRect(86,198,84,84);
-      g.lineWidth=1; g.globalAlpha=.45; g.strokeRect(94,206,68,68);
-      g.globalAlpha=.4; for(var bx=100;bx<=156;bx+=7)for(var by=212;by<=268;by+=7){ g.beginPath(); g.arc(bx,by,1.6,0,7); g.fill(); }
-      g.globalAlpha=1; txt("A19",CX,234,14); txt("PRO",CX,250,10);
-      g.lineWidth=1.6; g.globalAlpha=.8; g.strokeRect(46,100,62,40); g.globalAlpha=.5; txt("MODEM",77,124,7);
-      g.globalAlpha=.8; g.strokeRect(148,100,62,40); g.globalAlpha=.5; txt("NAND",179,124,7);
-      g.lineWidth=1.4; g.globalAlpha=.7; g.strokeRect(50,310,50,34); g.globalAlpha=.5; txt("PMIC",75,332,7);
-      g.strokeRect(156,310,52,34); g.globalAlpha=.5; txt("UWB",182,332,7);
-      g.lineWidth=1.6; g.globalAlpha=.6; [[50,400],[66,400],[82,400],[186,400],[202,400]].forEach(function(p){ g.fillRect(p[0]-2,p[1]-6,4,12); });
-      g.globalAlpha=.45; [[54,84],[202,84],[54,420],[202,420]].forEach(function(p){ g.beginPath(); g.arc(p[0],p[1],3,0,7); g.stroke(); g.beginPath(); g.arc(p[0],p[1],1,0,7); g.fill(); });
-      hdim(70,34,222,"BOARD",-14);
-      callout("SoC A19 PRO",170,240,210,222); callout("RF MODEM",108,120,142,112);
-      g.globalAlpha=.8; txt("LOGIC BOARD",CX,456,8); txt("DETAIL C",CX,16,7);
-    } else if(type==="domain"){ /* BATTERY — dual-cell */
-      g.lineWidth=2; g.globalAlpha=.85; g.beginPath(); g.roundRect(44,90,168,170,6); g.stroke(); hatch(44,90,168,170,10);
-      g.beginPath(); g.roundRect(44,280,168,140,6); g.stroke(); hatch(44,280,168,140,10);
-      g.lineWidth=2; g.globalAlpha=1; g.fillRect(116,78,24,14); txt("+",CX,90,11);
-      g.fillRect(116,418,24,14); txt("–",CX,430,11);
-      g.lineWidth=1.6; g.globalAlpha=.8; g.strokeRect(72,264,112,16);
-      g.lineWidth=.8; for(var bx2=80;bx2<180;bx2+=8){ g.beginPath(); g.moveTo(bx2,264); g.lineTo(bx2,280); g.stroke(); }
-      g.lineWidth=1.4; g.globalAlpha=.6;
-      g.beginPath(); g.moveTo(100,260); g.lineTo(100,248); g.lineTo(68,248); g.lineTo(68,264); g.stroke();
-      g.beginPath(); g.moveTo(156,280); g.lineTo(156,296); g.lineTo(188,296); g.lineTo(188,280); g.stroke();
-      g.lineWidth=1; g.globalAlpha=.5; g.strokeRect(62,130,34,20); txt("\u26A0",79,146,10);
-      hdim(90,44,212,"4,832 mAh",-14); vdim(212,90,260,"CELL 1",10); vdim(212,280,420,"CELL 2",10);
-      callout("BMS",128,272,162,258);
-      g.globalAlpha=.8; txt("BATTERY ASSEMBLY",CX,456,8); txt("DETAIL D",CX,16,7);
-    } else { /* BACK GLASS + TITANIUM FRAME */
-      g.lineWidth=2.2; g.globalAlpha=.9; g.beginPath(); g.roundRect(38,32,180,448,22); g.stroke();
-      g.lineWidth=1; g.globalAlpha=.35; g.beginPath(); g.roundRect(44,38,168,436,18); g.stroke();
-      g.lineWidth=2; g.globalAlpha=1; g.beginPath(); g.roundRect(48,50,106,106,22); g.stroke();
-      [[78,82],[130,82],[104,128]].forEach(function(p){
-        g.lineWidth=1.8; g.globalAlpha=1; g.beginPath(); g.arc(p[0],p[1],17,0,7); g.stroke();
-        g.globalAlpha=.55; g.beginPath(); g.arc(p[0],p[1],11,0,7); g.stroke();
-        g.globalAlpha=.25; g.beginPath(); g.arc(p[0],p[1],5,0,7); g.fill();
-      });
-      g.globalAlpha=.8; g.beginPath(); g.arc(140,128,5,0,7); g.fill();
-      g.globalAlpha=.45; g.beginPath(); g.arc(140,110,4,0,7); g.stroke();
-      g.lineWidth=1.4; g.globalAlpha=.35; g.beginPath(); g.arc(CX,300,46,0,7); g.stroke();
-      g.setLineDash([4,4]); g.beginPath(); g.arc(CX,300,44,0,7); g.stroke(); g.setLineDash([]);
-      g.lineWidth=1.4; g.globalAlpha=.4; g.setLineDash([6,6]);
-      g.beginPath(); g.moveTo(38,178); g.lineTo(218,178); g.moveTo(38,392); g.lineTo(218,392); g.stroke(); g.setLineDash([]);
-      g.globalAlpha=.22; g.beginPath(); g.arc(CX,290,14,0,7); g.stroke();
-      g.lineWidth=1.4; g.globalAlpha=.5; g.fillRect(218,320,4,28);
-      g.globalAlpha=.55; [[62,466],[194,466]].forEach(function(p){
-        g.beginPath(); g.arc(p[0],p[1],4,0,7); g.stroke();
-        for(var a=0;a<5;a++){ var r2=2.5, ang=a*Math.PI*2/5-Math.PI/2; g.beginPath(); g.moveTo(p[0],p[1]); g.lineTo(p[0]+r2*Math.cos(ang),p[1]+r2*Math.sin(ang)); g.stroke(); }
-      });
-      hdim(32,38,218,"77.6",-14); vdim(218,32,480,"163.0",14);
-      hdim(50,48,154,"CAM MODULE",-8);
-      callout("48MP FUSION",130,82,170,68); callout("MAGSAFE",CX+46,300,196,292); callout("Ti FRAME",38,256,14,248);
-      g.globalAlpha=.8; txt("BACK GLASS + FRAME",CX,498,8); txt("DETAIL E",CX,16,7);
-    }
-    const tex=new THREE.CanvasTexture(c); tex.anisotropy=4; return tex;
+  var box = document.getElementById('notif'), ni = 0;
+  function cycle() {
+    var n = notes[ni++ % notes.length];
+    box.querySelector('img').src = 'apps/' + n[0] + '.png';
+    box.querySelector('b').textContent = n[1];
+    box.querySelector('span').textContent = n[2];
+    box.classList.add('show');
+    setTimeout(function () { box.classList.remove('show'); }, 3200);
   }
 
-  /* ---------- THREE setup ---------- */
-  let renderer,sceneT,camera,group,pointLight,pins,pinGeo;
-  const W=160,H=340,T=14,R=20;
-  const layerObjs=[]; // {grp,body,bodyMat,edgesMat,faceMat}
-  let glW=1,glH=1,fit=1;
-  let ok=false;
-
-  function roundedShape(w,h,r){
-    const s=new THREE.Shape(); const x=-w/2,y=-h/2;
-    s.moveTo(x+r,y); s.lineTo(x+w-r,y); s.absarc(x+w-r,y+r,r,-Math.PI/2,0,false);
-    s.lineTo(x+w,y+h-r); s.absarc(x+w-r,y+h-r,r,0,Math.PI/2,false);
-    s.lineTo(x+r,y+h); s.absarc(x+r,y+h-r,r,Math.PI/2,Math.PI,false);
-    s.lineTo(x,y+r); s.absarc(x+r,y+r,r,Math.PI,Math.PI*1.5,false);
-    return s;
-  }
-
-  function initGL(){
-    if(!window.THREE){ ok=false; return; }
-    try{
-      renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true,alpha:true,powerPreference:"high-performance"});
-      renderer.setClearColor(0x000000,0);
-    }catch(e){ ok=false; return; }
-    sceneT=new THREE.Scene();
-    camera=new THREE.PerspectiveCamera(30,1,1,6000); camera.position.set(0,0,760);
-    group=new THREE.Group(); sceneT.add(group);
-
-    // lights
-    sceneT.add(new THREE.AmbientLight(0x6a7a90,1.6));
-    const key=new THREE.DirectionalLight(0xffffff,1.6); key.position.set(0.6,1,1.2); sceneT.add(key);
-    const rim=new THREE.DirectionalLight(0x36e0cf,0.7); rim.position.set(-1,-0.4,-1); sceneT.add(rim);
-    const fill=new THREE.DirectionalLight(0xffffff,0.4); fill.position.set(-0.5,0.3,0.8); sceneT.add(fill);
-    pointLight=new THREE.PointLight(new THREE.Color(accentHex),0,720,2); group.add(pointLight);
-
-    const bodyGeo=new THREE.ExtrudeGeometry(roundedShape(W,H,R),{depth:T,bevelEnabled:true,bevelThickness:1.6,bevelSize:1.6,bevelSegments:2,steps:1});
-    bodyGeo.center();
-    const edgeGeo=new THREE.EdgesGeometry(bodyGeo,28);
-    const faceGeo=new THREE.PlaneGeometry(W,H);
-    const backFaceGeo=new THREE.PlaneGeometry(W,H);
-
-    LAYERS.forEach((L,i)=>{
-      const grp=new THREE.Group();
-      var bodyColors=[0x192840,0x162438,0x1a2c42,0x1e3040,0x22343e];
-      const bodyMat=new THREE.MeshPhongMaterial({color:bodyColors[i]||0x1b2230,specular:0x4a6a88,shininess:70,emissive:new THREE.Color(accentHex),emissiveIntensity:0.0,transparent:true,opacity:0.78});
-      const body=new THREE.Mesh(bodyGeo,bodyMat);
-      const edgesMat=new THREE.LineBasicMaterial({color:0xece8dd,transparent:true,opacity:0.7});
-      const edges=new THREE.LineSegments(edgeGeo,edgesMat);
-      const tex=makeTex(L.type);
-      const faceMat=new THREE.MeshBasicMaterial({map:tex,transparent:true,opacity:1.0,side:THREE.DoubleSide,depthTest:false});
-      const face=new THREE.Mesh(faceGeo,faceMat); face.position.z=T/2+1.5; face.renderOrder=10;
-      const backTex=makeTex(L.type);
-      const backMat=new THREE.MeshBasicMaterial({map:backTex,transparent:true,opacity:0.6,side:THREE.DoubleSide,depthTest:false});
-      const backFace=new THREE.Mesh(backFaceGeo,backMat); backFace.position.z=-T/2-1.5; backFace.rotation.y=Math.PI; backFace.renderOrder=10;
-      grp.add(body); grp.add(edges); grp.add(face); grp.add(backFace);
-      group.add(grp);
-      layerObjs.push({grp,body,bodyMat,edgesMat,faceMat,backMat,face,backFace});
+  var launch = document.getElementById('launch');
+  phoneLinks.forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      if (!motion || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+      e.preventDefault();
+      launch.querySelector('img').src = a.querySelector('img').src;
+      launch.querySelector('span').textContent = a.querySelector('span').textContent;
+      launch.classList.add('on');
+      setTimeout(function () { window.location.href = a.href; }, 560);
     });
+  });
+  window.addEventListener('pageshow', function () { launch.classList.remove('on'); });
 
-    // connector pins (4 vertical lines)
-    pinGeo=new THREE.BufferGeometry();
-    pinGeo.setAttribute("position",new THREE.BufferAttribute(new Float32Array(8*3),3));
-    const pinMat=new THREE.LineBasicMaterial({color:new THREE.Color(accentHex),transparent:true,opacity:0});
-    pins=new THREE.LineSegments(pinGeo,pinMat); group.add(pins);
-
-    // ===== iPhone-style triple-camera module on the back (platform) layer =====
-    (function buildCamera(){
-      const cam=new THREE.Group();
-      const plateGeo=new THREE.ExtrudeGeometry(roundedShape(82,82,20),{depth:10,bevelEnabled:true,bevelThickness:1.2,bevelSize:1.2,bevelSegments:1,steps:1}); plateGeo.center();
-      const plateMat=new THREE.MeshPhongMaterial({color:0x10151d,specular:0x556677,shininess:80});
-      cam.add(new THREE.Mesh(plateGeo,plateMat));
-      const ringMat=new THREE.MeshPhongMaterial({color:0x05070a,specular:0x334455,shininess:90});
-      const glassMat=new THREE.MeshPhongMaterial({color:0x070b12,specular:0x88bbdd,shininess:120,emissive:new THREE.Color(0x12303a),emissiveIntensity:0.7});
-      [[-18,18],[18,18],[0,-19]].forEach(p=>{
-        const ring=new THREE.Mesh(new THREE.TorusGeometry(14,3.4,16,30),ringMat); ring.position.set(p[0],p[1],7); cam.add(ring);
-        const glass=new THREE.Mesh(new THREE.CircleGeometry(11,26),glassMat); glass.position.set(p[0],p[1],7.6); cam.add(glass);
-      });
-      const flash=new THREE.Mesh(new THREE.CircleGeometry(4.5,18),new THREE.MeshBasicMaterial({color:0xffe6c2})); flash.position.set(22,-19,7.6); cam.add(flash);
-      const lidar=new THREE.Mesh(new THREE.CircleGeometry(4,16),new THREE.MeshPhongMaterial({color:0x0a0d12,specular:0x223344,shininess:40})); lidar.position.set(-22,-19,7.6); cam.add(lidar);
-      cam.position.set(-W/2+60,H/2-64,-T/2-6); cam.rotation.y=Math.PI; // mount on the back face
-      layerObjs[N-1].grp.add(cam); layerObjs[N-1].cam=cam;
-    })();
-
-    ok=true;
-    resize();
-  }
-
-  function recolor(){
-    accentHex=cssVar("--accent")||"#ff6a1a";
-    if(!ok) return;
-    const c=new THREE.Color(accentHex);
-    layerObjs.forEach(o=>{ o.bodyMat.emissive.copy(c); });
-    pointLight.color.copy(c); pins.material.color.copy(c);
-    render();
-  }
-
-  function resize(){
-    glW=stage.clientWidth||innerWidth; glH=stage.clientHeight||innerHeight;
-    if(ok){ renderer.setPixelRatio(Math.min(devicePixelRatio,1.5)); renderer.setSize(glW,glH,false); camera.aspect=glW/glH; camera.updateProjectionMatrix(); }
-    fit=Math.min(0.78, glW/1240, glH/1180); fit=Math.max(0.42,fit);
-    if(ok) group.scale.setScalar(fit);
-  }
-
-  /* ---------- state ---------- */
-  let prog=0, progTarget=0, explodeP=0, activeIdx=0, lastActive=-1, rafAlive=false;
-  let dragX=0, dragY=0, autoY=0, curXdeg=-16, curYdeg=22;
-  let targetXdeg=-16, targetYdeg=22;
-  let dragging=false, lastPX=0, lastPY=0;
-
-  function zFor(i,p){ const mid=(N-1)/2; return lerp((mid-i)*4,(mid-i)*132,p); }
-
-  function apply3D(){
-    if(!ok) return;
-    group.rotation.x=curXdeg*DEG; group.rotation.y=curYdeg*DEG;
-    const mid=(N-1)/2;
-    layerObjs.forEach((o,i)=>{
-      o.grp.position.z=zFor(i,explodeP);
-      const on=(i===activeIdx && prog>0.12);
-      const exploded=prog>0.14;
-      o.edgesMat.color.set(on?accentHex:0xece8dd);
-      o.edgesMat.opacity=on?1.0:(exploded?0.55:0.7);
-      o.bodyMat.emissiveIntensity=on?0.4:0.02;
-      o.bodyMat.opacity=on?0.7:(exploded?0.35:0.5);
-      o.faceMat.opacity=on?1.0:(exploded?0.8:0.95);
-      o.backMat.opacity=on?0.7:(exploded?0.45:0.5);
-      const sc=on?1.0:(exploded?0.985:1.0); o.grp.scale.setScalar(sc);
-    });
-    const az=zFor(activeIdx,explodeP);
-    pointLight.position.set(0,0,az+60); pointLight.intensity=explodeP*2.6;
-    // pins
-    const fz=zFor(0,explodeP), bz=zFor(N-1,explodeP);
-    const cw=W/2-16, ch=H/2-16, pa=pinGeo.attributes.position.array;
-    const corners=[[-cw,-ch],[cw,-ch],[cw,ch],[-cw,ch]];
-    for(let k=0;k<4;k++){ const o=k*6; pa[o]=corners[k][0]; pa[o+1]=corners[k][1]; pa[o+2]=fz; pa[o+3]=corners[k][0]; pa[o+4]=corners[k][1]; pa[o+5]=bz; }
-    pinGeo.attributes.position.needsUpdate=true; pins.material.opacity=explodeP*0.4;
-  }
-
-  function render(){ if(ok) renderer.render(sceneT,camera); updateCallout(); }
-
-  function updateCallout(){
-    if(!ok) return;
-    const show=(prog>0.12 && prog<0.97);
-    lead3d.style.opacity=show?1:0; tag3d.style.opacity=show?1:0;
-    if(!show) return;
-    group.updateMatrixWorld();
-    const az=zFor(activeIdx,explodeP);
-    const edge=new THREE.Vector3(W/2+8,0,az); group.localToWorld(edge); edge.project(camera);
-    const lab=new THREE.Vector3(W/2+86,46,az); group.localToWorld(lab); lab.project(camera);
-    const ex=(edge.x*0.5+0.5)*glW, ey=(-edge.y*0.5+0.5)*glH;
-    const lx=(lab.x*0.5+0.5)*glW, ly=(-lab.y*0.5+0.5)*glH;
-    leadLine.setAttribute("x1",ex); leadLine.setAttribute("y1",ey);
-    leadLine.setAttribute("x2",lx); leadLine.setAttribute("y2",ly);
-    leadDot.setAttribute("cx",ex); leadDot.setAttribute("cy",ey);
-    tag3d.style.left=(lx+8)+"px"; tag3d.style.top=ly+"px";
-    const L=LAYERS[activeIdx]; tag3dId.textContent=L.id; tag3dNm.textContent=L.name;
-  }
-
-  /* ---------- scroll: only sets a TARGET (cheap) — the rAF loop eases + renders ---------- */
-  function onScroll(){
-    const r=teardown.getBoundingClientRect();
-    const total=teardown.offsetHeight-innerHeight;
-    progTarget=clamp(-r.top/total,0,1);
-    dmArrow.textContent = progTarget>0.5 ? "⟲" : "⟶";
-    dmBtn.firstChild.textContent = progTarget>0.5 ? "Assemble " : "Dismantle ";
-    if(!rafAlive){ // frozen context (screenshot tooling / no rAF) — snap + render directly
-      prog=progTarget; curXdeg=-16-smooth(0.10,0.82,prog)*6+dragX; curYdeg=22+prog*30+dragY+autoY;
-      updateUI(); apply3D(); render();
-    }
-  }
-
-  /* ---------- cheap per-frame DOM/state sync from eased prog ---------- */
-  function updateUI(){
-    explodeP=smooth(0.10,0.82,prog);
-    activeIdx=clamp(Math.floor(smooth(0.12,0.86,prog)*N),0,N-1);
-    ticks.forEach((t,i)=>t.classList.toggle("on", i===activeIdx && prog>0.12));
-    const heroOut=smooth(0.02,0.12,prog);
-    heroOv.style.opacity=(1-heroOut).toFixed(3); heroOv.style.transform="translateY("+(-heroOut*40)+"px)";
-    cue.style.opacity=(1-smooth(0.0,0.06,prog)).toFixed(3);
-    const showHud=(prog>0.12 && prog<0.97)?1:0; hud.style.opacity=showHud; readout.style.opacity=showHud;
-    if(activeIdx!==lastActive){
-      lastActive=activeIdx;
-      const L=LAYERS[activeIdx];
-      hudId.textContent=L.id; hudName.textContent=L.name; hudSub.textContent="Layer "+(N-activeIdx)+" / "+N+" · "+L.sub;
-      roDesc.textContent=L.desc;
-      roSpecs.innerHTML='<div class="hwrow">'+L.hw+'</div>'+L.specs.map(s=>"<div>"+s+"</div>").join("");
-    }
-  }
-
-  /* ---------- drag ---------- */
-  function pt(e){ return e.touches?{x:e.touches[0].clientX,y:e.touches[0].clientY}:{x:e.clientX,y:e.clientY}; }
-  function down(e){ dragging=true; scene2d.classList.add("grabbing"); const p=pt(e); lastPX=p.x; lastPY=p.y; }
-  function move(e){ if(!dragging) return; const p=pt(e); dragY+=(p.x-lastPX)*0.35; dragX-=(p.y-lastPY)*0.28; dragX=clamp(dragX,-55,55); lastPX=p.x; lastPY=p.y; if(e.cancelable) e.preventDefault(); }
-  function up(){ dragging=false; scene2d.classList.remove("grabbing"); }
-  scene2d.addEventListener("mousedown",down); addEventListener("mousemove",move); addEventListener("mouseup",up);
-  scene2d.addEventListener("touchstart",down,{passive:true}); addEventListener("touchmove",move,{passive:false}); addEventListener("touchend",up);
-
-  dmBtn.addEventListener("click",()=>{ const top=teardown.offsetTop, total=teardown.offsetHeight-innerHeight; const go=prog<=0.5; scrollTo({top:top+total*(go?0.74:0.0),behavior:"smooth"}); });
-
-  /* ---------- rAF: single render per frame; eases prog (dismantle) + rotation ---------- */
-  function loop(){
-    rafAlive=true;
-    requestAnimationFrame(loop);
-    // skip all GPU work when the teardown stage is scrolled out of view
-    const r=teardown.getBoundingClientRect();
-    if(r.bottom<=0 || r.top>=innerHeight) return;
-    if(!dragging && !reduce) autoY+=0.045;
-    // ease scroll progress → buttery dismantle, independent of wheel cadence
-    prog += (progTarget-prog)*0.16;
-    if(Math.abs(progTarget-prog)<0.0005) prog=progTarget;
-    targetXdeg=-16 - smooth(0.10,0.82,prog)*6 + dragX;
-    targetYdeg=22 + prog*30 + dragY;
-    curXdeg += (targetXdeg-curXdeg)*0.16;
-    curYdeg += ((targetYdeg+autoY)-curYdeg)*0.16;
-    updateUI();
-    apply3D(); render();
-  }
-
-  /* ---------- the rest ---------- */
-  function initReveal(){
-    if(reduce) return;
-    const root=document.documentElement; root.classList.add("anim");
-    const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}})},{threshold:.14});
-    document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
-    let alive=false; requestAnimationFrame(()=>alive=true); setTimeout(()=>{if(!alive)root.classList.remove("anim");},450);
-  }
-  function initRecord(){
-    const axis=document.querySelector("#recAxis .fill"); const stations=[...document.querySelectorAll(".station")];
-    if(!axis) return;
-    const upd=()=>{ const rec=document.querySelector(".record").getBoundingClientRect(); const p=clamp((innerHeight*0.5-rec.top)/rec.height,0,1); axis.style.height=(p*100)+"%"; stations.forEach(s=>s.classList.toggle("on",s.getBoundingClientRect().top<innerHeight*0.6)); };
-    addEventListener("scroll",upd,{passive:true}); upd();
-  }
-  function initMagnetic(){
-    if(reduce||matchMedia("(max-width:860px)").matches) return;
-    document.querySelectorAll("[data-magnetic]").forEach(el=>{
-      el.addEventListener("mousemove",e=>{const r=el.getBoundingClientRect();el.style.transform="translate("+((e.clientX-r.left-r.width/2)*0.3)+"px,"+((e.clientY-r.top-r.height/2)*0.3)+"px)";});
-      el.addEventListener("mouseleave",()=>el.style.transform="");
+  // the phone and cursor follow the mouse
+  var phone = document.getElementById('phone');
+  if (motion && fine) {
+    window.addEventListener('pointermove', function (e) {
+      var x = e.clientX / innerWidth - 0.5, y = e.clientY / innerHeight - 0.5;
+      phone.style.setProperty('--ry', (x * 26).toFixed(2) + 'deg');
+      phone.style.setProperty('--rx', (-y * 16).toFixed(2) + 'deg');
     });
   }
-  function initCross(){
-    if(matchMedia("(max-width:860px)").matches) return;
-    const c=document.querySelector(".cross"), hx=c.querySelector(".hx"), vx=c.querySelector(".vx"), co=c.querySelector(".coord");
-    addEventListener("mousemove",e=>{ c.style.opacity=1; hx.style.top=e.clientY+"px"; vx.style.left=e.clientX+"px"; co.style.left=e.clientX+"px"; co.style.top=e.clientY+"px"; co.textContent=String(Math.round(e.clientX)).padStart(4,"0")+","+String(Math.round(e.clientY)).padStart(4,"0"); });
-    addEventListener("mouseleave",()=>c.style.opacity=0);
-  }
-  function initTheme(){
-    const root=document.documentElement; const saved=localStorage.getItem("ar-medium")||"blackprint"; root.setAttribute("data-theme",saved);
-    const btns=document.querySelectorAll(".tswitch button");
-    const sync=()=>btns.forEach(b=>b.classList.toggle("on",b.dataset.theme===root.getAttribute("data-theme")));
-    btns.forEach(b=>b.addEventListener("click",()=>{ root.setAttribute("data-theme",b.dataset.theme); localStorage.setItem("ar-medium",b.dataset.theme); sync(); setTimeout(recolor,30); }));
-    sync();
+  var cursor = document.querySelector('.cursor');
+  if (fine && hasGsap) {
+    var cx = gsap.quickTo(cursor, 'x', { duration: 0.35, ease: 'power3' }), cy = gsap.quickTo(cursor, 'y', { duration: 0.35, ease: 'power3' });
+    window.addEventListener('pointermove', function (e) { cx(e.clientX); cy(e.clientY); });
+    document.querySelectorAll('a, .what, .card').forEach(function (el) {
+      el.addEventListener('pointerenter', function () { cursor.classList.add('big'); });
+      el.addEventListener('pointerleave', function () { cursor.classList.remove('big'); });
+    });
   }
 
-  function boot(){
-    initTheme(); initGL(); resize(); onScroll();
-    addEventListener("scroll",onScroll,{passive:true});
-    addEventListener("resize",()=>{ resize(); onScroll(); });
-    initReveal(); initRecord(); initMagnetic(); initCross();
-    if(reduce){ progTarget=0.5; prog=0.5; curXdeg=-19; curYdeg=30; updateUI(); apply3D(); render(); }
-    else if(ok){ requestAnimationFrame(loop); }
+  // nav gets a backdrop once you scroll
+  var nav = document.getElementById('nav');
+  function navState() { nav.classList.toggle('solid', scrollY > 30); }
+  window.addEventListener('scroll', navState, { passive: true }); navState();
+
+  // ---------- about text: split into words ----------
+  var about = document.getElementById('about-text');
+  about.innerHTML = about.textContent.split(' ').map(function (w) { return '<span class="wd">' + w + '</span>'; }).join(' ');
+
+  // ---------- no GSAP or no motion: show everything as is ----------
+  if (!hasGsap || !motion) {
+    if (loader) loader.remove();
+    document.querySelectorAll('.about .wd').forEach(function (w) { w.classList.add('on'); });
+    document.querySelectorAll('.career-item').forEach(function (c) { c.classList.add('lit'); });
+    buildStackFallback();
+    return;
   }
-  if(document.readyState==="loading") addEventListener("DOMContentLoaded",boot); else boot();
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // smooth scrolling, driven by GSAP's ticker so ScrollTrigger stays in sync
+  if (window.Lenis) {
+    var lenis = new Lenis({ duration: 1.15, smoothWheel: true });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(function (t) { lenis.raf(t * 1000); });
+    gsap.ticker.lagSmoothing(0);
+    document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+      a.addEventListener('click', function (e) { var id = a.getAttribute('href'); if (id.length > 1) { e.preventDefault(); lenis.scrollTo(id === '#top' ? 0 : id, { offset: -10 }); } });
+    });
+  }
+
+  // ---------- loader, then the hero intro ----------
+  var shown = false;
+  try { shown = sessionStorage.getItem('seen') === '1'; sessionStorage.setItem('seen', '1'); } catch (e) {}
+  var intro = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
+  intro.from('.name .w', { yPercent: 115, duration: 1.1, stagger: 0.1, ease: 'power4.out' })
+    .from('.hello', { x: -20, opacity: 0, duration: 0.6 }, 0.1)
+    .from('.hero-sub, .hero-cta .btn', { y: 18, opacity: 0, duration: 0.7, stagger: 0.08 }, 0.45)
+    .from('.role > *', { y: 40, opacity: 0, duration: 0.8, stagger: 0.1 }, 0.3)
+    .from('.device', { y: 120, opacity: 0, rotateX: 25, duration: 1.4, ease: 'expo.out' }, 0.15)
+    .from('.apps li', { scale: 0, opacity: 0, duration: 0.6, ease: 'back.out(2.2)', stagger: { grid: [2, 3], from: 'center', amount: 0.45 } }, 0.9)
+    .from('.dock li', { y: 34, opacity: 0, duration: 0.55, stagger: 0.08, ease: 'back.out(2)' }, 1.2)
+    .from('.glow.g1', { scale: 0.4, opacity: 0, duration: 1.8, ease: 'power2.out' }, 0)
+    .add(function () { cycle(); setInterval(cycle, 4400); }, 1.8);
+
+  function startSite() { if (loader) loader.remove(); intro.play(); }
+  if (shown) { startSite(); }
+  else {
+    var pct = document.getElementById('pct'), state = { v: 0 }, loaded = document.readyState === 'complete';
+    window.addEventListener('load', function () { loaded = true; });
+    var count = gsap.to(state, { v: 92, duration: 1.4, ease: 'power1.inOut', onUpdate: function () { pct.textContent = Math.round(state.v) + '%'; } });
+    var finish = function () {
+      gsap.to(state, { v: 100, duration: 0.35, onUpdate: function () { pct.textContent = Math.round(state.v) + '%'; }, onComplete: function () {
+        document.getElementById('ltext').textContent = 'WELCOME';
+        gsap.timeline({ onComplete: startSite })
+          .to('.pill', { scale: 1.08, duration: 0.25, ease: 'power2.out' })
+          .to(loader, { clipPath: 'circle(0% at 50% 50%)', duration: 0.9, ease: 'power4.inOut' }, '+=0.15');
+        gsap.set(loader, { clipPath: 'circle(150% at 50% 50%)' });
+        intro.play(); intro.pause(0);   // render the hero's first frame under the loader
+      } });
+    };
+    var wait = function () { if (loaded || Date.now() - t0 > 3500) finish(); else setTimeout(wait, 100); };
+    var t0 = Date.now();
+    count.eventCallback('onComplete', wait);
+  }
+
+  // ---------- role rotator ----------
+  var roles = [['Flutter', 'Developer'], ['Mobile', 'Engineer']], ri = 0;
+  var r1 = document.querySelector('.r1 span'), r2 = document.querySelector('.r2 span');
+  setInterval(function () {
+    ri = (ri + 1) % roles.length;
+    gsap.timeline()
+      .to([r1, r2], { yPercent: -110, duration: 0.5, stagger: 0.06, ease: 'power3.in' })
+      .add(function () { r1.textContent = roles[ri][0]; r2.textContent = roles[ri][1]; })
+      .fromTo([r1, r2], { yPercent: 110 }, { yPercent: 0, duration: 0.6, stagger: 0.06, ease: 'power3.out' });
+  }, 3200);
+
+  // ---------- scroll effects ----------
+  // the phone drifts up and away as the hero scrolls out
+  gsap.to('.device', { yPercent: -18, scale: 0.92, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
+
+  // about: words light up one by one
+  var words = gsap.utils.toArray('.about .wd');
+  ScrollTrigger.create({
+    trigger: '.about', start: 'top 75%', end: 'bottom 45%', scrub: true,
+    onUpdate: function (s) { var n = Math.round(s.progress * words.length); words.forEach(function (w, i) { w.classList.toggle('on', i < n); }); }
+  });
+
+  // headings slide up line by line
+  gsap.utils.toArray('.big').forEach(function (h) {
+    gsap.from(h, { y: 70, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: h, start: 'top 85%' } });
+  });
+  gsap.from('.what', { y: 60, opacity: 0, duration: 0.9, stagger: 0.15, ease: 'power3.out', scrollTrigger: { trigger: '.what-grid', start: 'top 80%' } });
+
+  // career: the rail draws as you scroll; each role lights up when reached
+  gsap.fromTo('.career-rail i', { scaleY: 0 }, { scaleY: 1, ease: 'none', scrollTrigger: { trigger: '.career-list', start: 'top 60%', end: 'bottom 60%', scrub: 0.5 } });
+  gsap.utils.toArray('.career-item').forEach(function (item) {
+    ScrollTrigger.create({ trigger: item, start: 'top 62%', end: 'bottom 62%', toggleClass: 'lit' });
+    gsap.from(item.children, { y: 40, opacity: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out', scrollTrigger: { trigger: item, start: 'top 80%' } });
+  });
+
+  // work: vertical scroll drives a horizontal track (desktop)
+  var mm = gsap.matchMedia();
+  mm.add('(min-width: 961px)', function () {
+    var track = document.getElementById('track');
+    var dist = function () { return track.scrollWidth - document.documentElement.clientWidth; };
+    gsap.to(track, {
+      x: function () { return -dist(); }, ease: 'none',
+      scrollTrigger: { trigger: '.track-wrap', start: 'center center', end: function () { return '+=' + dist(); }, pin: true, scrub: 0.8, invalidateOnRefresh: true, anticipatePin: 1 }
+    });
+  });
+  gsap.from('.oss-card', { y: 60, opacity: 0, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: '.oss-card', start: 'top 82%' } });
+
+  // ---------- tech stack: balls that fall and can be thrown ----------
+  function buildStackFallback() {
+    var ul = document.getElementById('stack-fallback');
+    ul.innerHTML = stackNames.map(function (n) { return '<li>' + n + '</li>'; }).join('');
+    ul.style.display = 'flex';
+    document.getElementById('stack-box').style.display = 'none';
+    document.getElementById('stack-hint').style.display = 'none';
+  }
+  if (!window.Matter) { buildStackFallback(); return; }
+  // start the physics the first time the box scrolls into view
+  var stackBox = document.getElementById('stack-box'), started = false;
+  function inView(el, frac) { var r = el.getBoundingClientRect(); return r.top < innerHeight * frac && r.bottom > 0; }
+  function maybeStart() { if (!started && inView(stackBox, 0.8)) { started = true; window.removeEventListener('scroll', maybeStart); physics(); } }
+  window.addEventListener('scroll', maybeStart, { passive: true });
+  maybeStart();
+
+  function physics() {
+    var M = Matter, boxEl = document.getElementById('stack-box'), canvas = document.getElementById('stack-canvas');
+    var ctx = canvas.getContext('2d'), dpr = Math.min(devicePixelRatio || 1, 2);
+    var W = boxEl.clientWidth, H = boxEl.clientHeight;
+    canvas.width = W * dpr; canvas.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var engine = M.Engine.create(); engine.gravity.y = 1.1;
+    var wall = { isStatic: true, render: { visible: false } };
+    M.Composite.add(engine.world, [
+      M.Bodies.rectangle(W / 2, H + 40, W * 2, 80, wall),
+      M.Bodies.rectangle(-40, H / 2, 80, H * 3, wall),
+      M.Bodies.rectangle(W + 40, H / 2, 80, H * 3, wall)
+    ]);
+    var small = W < 600, names = small ? stackNames.slice(0, 14) : stackNames;
+    var palette = [['#60A5FA', '#3B5BDB'], ['#A78BFA', '#6D28D9'], ['#F0ABFC', '#C026D3'], ['#E9E4EC', '#B9B2C9']];
+    var balls = names.map(function (n, i) {
+      var r = (small ? 38 : 50) + (n.length > 8 ? (small ? 8 : 12) : 0);
+      var b = M.Bodies.circle(40 + Math.random() * (W - 80), -40 - i * 36, r, { restitution: 0.55, friction: 0.05, frictionAir: 0.012 });
+      b.label = n; b.r = r; b.col = palette[i % palette.length];
+      return b;
+    });
+    M.Composite.add(engine.world, balls);
+    if (fine) {
+      var mouse = M.Mouse.create(canvas); mouse.pixelRatio = 1;
+      mouse.element.removeEventListener('wheel', mouse.mousewheel);
+      mouse.element.removeEventListener('mousewheel', mouse.mousewheel);
+      mouse.element.removeEventListener('DOMMouseScroll', mouse.mousewheel);
+      M.Composite.add(engine.world, M.MouseConstraint.create(engine, { mouse: mouse, constraint: { stiffness: 0.2, render: { visible: false } } }));
+    } else {
+      document.getElementById('stack-hint').textContent = 'Tap a ball to bounce it.';
+      canvas.addEventListener('click', function (e) {
+        var rc = canvas.getBoundingClientRect(), p = { x: e.clientX - rc.left, y: e.clientY - rc.top };
+        M.Query.point(balls, p).forEach(function (b) { M.Body.setVelocity(b, { x: (Math.random() - 0.5) * 12, y: -16 }); });
+      });
+    }
+    var running = true;   // pause the simulation while the box is off screen
+    window.addEventListener('scroll', function () { running = inView(boxEl, 1); }, { passive: true });
+    function draw() {
+      if (running) {
+        M.Engine.update(engine, 1000 / 60);
+        ctx.clearRect(0, 0, W, H);
+        balls.forEach(function (b) {
+          var g = ctx.createRadialGradient(b.position.x - b.r * 0.35, b.position.y - b.r * 0.4, b.r * 0.1, b.position.x, b.position.y, b.r);
+          g.addColorStop(0, b.col[0]); g.addColorStop(1, b.col[1]);
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(b.position.x, b.position.y, b.r, 0, 6.2832); ctx.fill();
+          ctx.save(); ctx.translate(b.position.x, b.position.y); ctx.rotate(b.angle);
+          ctx.fillStyle = b.col[0] === '#E9E4EC' ? '#14121C' : '#fff';
+          ctx.font = '600 ' + (small ? 12 : 14) + 'px Geist, system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText(b.label, 0, 0); ctx.restore();
+        });
+      }
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
 })();
 </script>
 </body>
