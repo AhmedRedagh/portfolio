@@ -181,7 +181,8 @@ ul { margin: 0; padding: 0; list-style: none; }
 .pager { display: flex; justify-content: center; gap: 7px; margin: auto 0 12px; }
 .pager i { width: 7px; height: 7px; border-radius: 50%; background: rgba(255, 255, 255, .45); }
 .pager i:first-child { background: #fff; }
-.dock { display: flex; justify-content: space-around; margin: 0 12px 10px; padding: 12px 8px; border-radius: 30px; background: rgba(255, 255, 255, .16); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.dock { display: flex; justify-content: space-around; margin: 0 10px 10px; padding: 11px 6px; border-radius: 30px; background: rgba(255, 255, 255, .16); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.dock img { width: 54px; height: 54px; border-radius: 13px; }
 .dock span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 .home-bar { width: 122px; height: 5px; border-radius: 3px; background: rgba(255, 255, 255, .9); margin: 0 auto 9px; }
 .launch { position: absolute; inset: 0; z-index: 5; display: grid; place-content: center; justify-items: center; gap: 14px; background: #0D0A1C; color: #fff; font-weight: 600; font-size: 15px; opacity: 0; transform: scale(.25); pointer-events: none; transition: transform .45s cubic-bezier(.2, .8, .2, 1), opacity .25s ease; }
@@ -306,7 +307,8 @@ section { position: relative; padding: 130px 0; }
   section { padding: 90px 0; }
   .phone { width: 270px; }
   .apps { gap: 18px 6px; padding: 84px 14px 0; }
-  .apps img, .dock img { width: 56px; height: 56px; border-radius: 13px; }
+  .apps img { width: 56px; height: 56px; border-radius: 13px; }
+  .dock img { width: 50px; height: 50px; border-radius: 12px; }
   .track { padding: 0 18px; }
   .card { width: 300px; min-height: 420px; padding: 24px; }
   .what { padding: 26px; }
@@ -374,6 +376,7 @@ section { position: relative; padding: 130px 0; }
             <li><a href="https://apps.apple.com/eg/app/islami-hub/id6756878998"><img src="apps/islami-hub.png" alt="" width="62" height="62"><span>Islami Hub</span></a></li>
             <li><a data-android="https://play.google.com/store/apps/details?id=com.yearinreview.app" href="https://apps.apple.com/app/year-in-review/id6747784581"><img src="apps/year-in-review.png" alt="" width="62" height="62"><span>A Year in Review</span></a></li>
             <li><a data-android="https://play.google.com/store/apps/details?id=com.abualgaitinews.app" href="https://apps.apple.com/us/app/%D9%82%D9%86%D8%A7%D8%A9-%D8%A7%D9%8A-%D9%86%D9%8A%D9%88%D8%B2-%D8%A7%D9%84%D9%81%D8%B6%D8%A7%D8%A6%D9%8A%D8%A9/id1532198502"><img src="apps/inews-tv.png" alt="" width="62" height="62"><span>I-News TV</span></a></li>
+            <li><a data-android="https://play.google.com/store/apps/details?id=com.leaguepred.app" href="https://play.google.com/store/apps/details?id=com.leaguepred.app"><img src="apps/league-plus.png" alt="" width="62" height="62"><span>League+</span></a></li>
           </ul>
           <div class="home-bar" aria-hidden="true"></div>
           <div class="launch" id="launch" aria-hidden="true"><img alt="" src="apps/sanad-rewards.png"><span></span></div>
@@ -435,7 +438,7 @@ section { position: relative; padding: 130px 0; }
       <article class="career-item">
         <div class="left"><div><h3>Flutter Engineer</h3><p class="co">League Plus, contract</p></div><p class="yr">2024</p></div>
         <ul>
-          <li>Built and shipped a sports-prediction app with private leagues users create and run</li>
+          <li>Built and shipped League+, a sports-prediction app with 10K+ downloads on Google Play and private leagues users create and run</li>
           <li>Live match data over GraphQL subscriptions, plus a deep-link referral flow straight into a league</li>
         </ul>
       </article>
@@ -461,7 +464,7 @@ section { position: relative; padding: 130px 0; }
 <section id="work" class="work">
   <div class="wrap work-head">
     <h2 class="big">My <span class="out">work</span></h2>
-    <p>Ten apps, nine of them live. Every link opens the real store page.</p>
+    <p>Eleven apps, ten of them live. Every link opens the real store page.</p>
   </div>
   <div class="track-wrap">
     <div class="track" id="track">
@@ -469,12 +472,13 @@ section { position: relative; padding: 130px 0; }
       <article class="card"><span class="num">02</span><img class="ico" src="apps/sanad-business.png" alt="Sanad Business icon" width="84" height="84"><h3>Sanad Business</h3><p class="cat">Workplace wellbeing</p><p>Sanad's corporate wellness mode, rebuilt as a standalone Flutter app that matches the live app's behavior.</p><p class="tools">Clean Architecture · BLoC · flavors</p><div class="links"><a href="https://apps.apple.com/us/app/sanad-business/id6805096924">App Store</a><a href="https://play.google.com/store/apps/details?id=com.sanadrewards.business">Google Play</a></div></article>
       <article class="card"><span class="num">03</span><img class="ico" src="apps/the-kitchen.png" alt="The Kitchen icon" width="84" height="84"><h3>The Kitchen</h3><p class="cat">Restaurant POS</p><p>Orders and inventory live in a local database, offline orders queue and sync with conflict handling, and tickets print straight to thermal printers.</p><p class="tools">Offline-first · sync queue · thermal printing</p><div class="links"><a href="https://apps.apple.com/us/app/the-kitchen/id6759858829">App Store</a><a href="https://play.google.com/store/apps/details?id=com.thekitchen.pos">Google Play</a></div></article>
       <article class="card"><span class="num">04</span><img class="ico" src="apps/rawafed.png" alt="Rawafed icon" width="84" height="84"><h3>Rawafed</h3><p class="cat">Real estate services</p><p>Built from scratch as lead developer: property listings with search and maps, bookable service requests, and in-app payments.</p><p class="tools">Google Maps · payments · FCM · Arabic/English RTL</p><div class="links"><a href="https://apps.apple.com/us/app/rawafed-%D8%B1%D9%88%D8%A7%D9%81%D8%AF/id6758261806">App Store</a><a href="https://play.google.com/store/apps/details?id=com.websoft.rawafed_app">Google Play</a></div></article>
-      <article class="card"><span class="num">05</span><img class="ico" src="apps/crm-gts.png" alt="CRM GTS icon" width="84" height="84"><h3>CRM GTS</h3><p class="cat">Client self-service portal</p><p>Clients see their licensed programs, invoices with QR codes, and open support tickets and complaints with comment threads.</p><p class="tools">OTP reset · FCM + local notifications · offline retry</p><div class="links"><a href="https://apps.apple.com/us/app/crm-gts/id6755529911">App Store</a></div></article>
-      <article class="card"><span class="num">06</span><img class="ico" src="apps/islami-hub.png" alt="Islami Hub icon" width="84" height="84"><h3>Islami Hub</h3><p class="cat">Quran, prayer times and azkar · team of 3</p><p>My part: patched the alarm plugin's native Android code so the azan stays silent during calls, and built Daily Hadith with an offline fallback in 5 languages.</p><p class="tools">Native Android · Hive · location</p><div class="links"><a href="https://apps.apple.com/eg/app/islami-hub/id6756878998">App Store</a></div></article>
-      <article class="card"><span class="num">07</span><img class="ico" src="apps/pulse.png" alt="Pulse icon" width="84" height="84"><h3>Pulse</h3><p class="cat">Gym training and fitness</p><p>Real-time coach chat, pedometer step tracking, video workouts, and reminders that keep streaks going.</p><p class="tools">Pusher · pedometer · video · FCM</p><div class="links"><a href="https://apps.apple.com/eg/app/pulse-trainer/id6767938059">App Store</a><a href="https://play.google.com/store/apps/details?id=com.sanadrewards.sanad.pulse">Google Play</a></div></article>
-      <article class="card"><span class="num">08</span><img class="ico" src="apps/year-in-review.png" alt="A Year in Review icon" width="84" height="84"><h3>A Year in Review</h3><p class="cat">Medical conferences</p><p>QR attendance, workshop enrollment, and live Q&amp;A with moderators, fully in Arabic and English.</p><p class="tools">QR · Cubit · RTL</p><div class="links"><a href="https://apps.apple.com/app/year-in-review/id6747784581">App Store</a><a href="https://play.google.com/store/apps/details?id=com.yearinreview.app">Google Play</a></div></article>
-      <article class="card"><span class="num">09</span><img class="ico" src="apps/inews-tv.png" alt="I-News TV icon" width="84" height="84"><h3>I-News TV</h3><p class="cat">Live news streaming</p><p>HLS/RTMP adaptive-bitrate streaming, a custom video player, and breaking-news alerts.</p><p class="tools">Video streaming · Firebase</p><div class="links"><a href="https://apps.apple.com/us/app/%D9%82%D9%86%D8%A7%D8%A9-%D8%A7%D9%8A-%D9%86%D9%8A%D9%88%D8%B2-%D8%A7%D9%84%D9%81%D8%B6%D8%A7%D8%A6%D9%8A%D8%A9/id1532198502">App Store</a><a href="https://play.google.com/store/apps/details?id=com.abualgaitinews.app">Google Play</a></div></article>
-      <article class="card"><span class="num">10</span><span class="ico ph" aria-hidden="true">M</span><h3>Mini Sales &amp; Mini Wash</h3><p class="cat">Saudi point of sale</p><p>Offline-first POS with ZATCA Phase 2 e-invoicing: invoices signed on the device and uploaded through a queue when the network returns.</p><p class="tools">ZATCA · Sunmi printing · erp_calculator · 80+ test files</p><div class="links"><span>In development</span></div></article>
+      <article class="card"><span class="num">05</span><img class="ico" src="apps/league-plus.png" alt="League+ icon" width="84" height="84"><h3>League+</h3><p class="cat">Sports predictions · 10K+ downloads</p><p>Predict Premier League, Champions League and World Cup scores, and run private leagues with friends. Live match data arrives the moment the server pushes it.</p><p class="tools">GraphQL subscriptions · deep-link referrals · FCM</p><div class="links"><a href="https://play.google.com/store/apps/details?id=com.leaguepred.app">Google Play</a></div></article>
+      <article class="card"><span class="num">06</span><img class="ico" src="apps/crm-gts.png" alt="CRM GTS icon" width="84" height="84"><h3>CRM GTS</h3><p class="cat">Client self-service portal</p><p>Clients see their licensed programs, invoices with QR codes, and open support tickets and complaints with comment threads.</p><p class="tools">OTP reset · FCM + local notifications · offline retry</p><div class="links"><a href="https://apps.apple.com/us/app/crm-gts/id6755529911">App Store</a></div></article>
+      <article class="card"><span class="num">07</span><img class="ico" src="apps/islami-hub.png" alt="Islami Hub icon" width="84" height="84"><h3>Islami Hub</h3><p class="cat">Quran, prayer times and azkar · team of 3</p><p>My part: patched the alarm plugin's native Android code so the azan stays silent during calls, and built Daily Hadith with an offline fallback in 5 languages.</p><p class="tools">Native Android · Hive · location</p><div class="links"><a href="https://apps.apple.com/eg/app/islami-hub/id6756878998">App Store</a></div></article>
+      <article class="card"><span class="num">08</span><img class="ico" src="apps/pulse.png" alt="Pulse icon" width="84" height="84"><h3>Pulse</h3><p class="cat">Gym training and fitness</p><p>Real-time coach chat, pedometer step tracking, video workouts, and reminders that keep streaks going.</p><p class="tools">Pusher · pedometer · video · FCM</p><div class="links"><a href="https://apps.apple.com/eg/app/pulse-trainer/id6767938059">App Store</a><a href="https://play.google.com/store/apps/details?id=com.sanadrewards.sanad.pulse">Google Play</a></div></article>
+      <article class="card"><span class="num">09</span><img class="ico" src="apps/year-in-review.png" alt="A Year in Review icon" width="84" height="84"><h3>A Year in Review</h3><p class="cat">Medical conferences</p><p>QR attendance, workshop enrollment, and live Q&amp;A with moderators, fully in Arabic and English.</p><p class="tools">QR · Cubit · RTL</p><div class="links"><a href="https://apps.apple.com/app/year-in-review/id6747784581">App Store</a><a href="https://play.google.com/store/apps/details?id=com.yearinreview.app">Google Play</a></div></article>
+      <article class="card"><span class="num">10</span><img class="ico" src="apps/inews-tv.png" alt="I-News TV icon" width="84" height="84"><h3>I-News TV</h3><p class="cat">Live news streaming</p><p>HLS/RTMP adaptive-bitrate streaming, a custom video player, and breaking-news alerts.</p><p class="tools">Video streaming · Firebase</p><div class="links"><a href="https://apps.apple.com/us/app/%D9%82%D9%86%D8%A7%D8%A9-%D8%A7%D9%8A-%D9%86%D9%8A%D9%88%D8%B2-%D8%A7%D9%84%D9%81%D8%B6%D8%A7%D8%A6%D9%8A%D8%A9/id1532198502">App Store</a><a href="https://play.google.com/store/apps/details?id=com.abualgaitinews.app">Google Play</a></div></article>
+      <article class="card"><span class="num">11</span><span class="ico ph" aria-hidden="true">M</span><h3>Mini Sales &amp; Mini Wash</h3><p class="cat">Saudi point of sale</p><p>Offline-first POS with ZATCA Phase 2 e-invoicing: invoices signed on the device and uploaded through a queue when the network returns.</p><p class="tools">ZATCA · Sunmi printing · erp_calculator · 80+ test files</p><div class="links"><span>In development</span></div></article>
     </div>
   </div>
 </section>
@@ -553,7 +557,8 @@ dart pub add erp_calculator</pre>
     ['pulse', 'Pulse', "Time for today's workout. Keep your streak going."],
     ['crm-gts', 'CRM GTS', 'New reply on your support ticket.'],
     ['sanad-business', 'Sanad Business', 'Your team moved up in the challenge.'],
-    ['rawafed', 'Rawafed', 'Your service request was updated.']
+    ['rawafed', 'Rawafed', 'Your service request was updated.'],
+    ['league-plus', 'League+', 'Kick-off! Your score prediction is locked in.']
   ];
   var box = document.getElementById('notif'), ni = 0;
   function cycle() {
